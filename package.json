@@ -1,8 +1,8 @@
 {
-  "name": "circuit-json-to-differential-pair-phase-skew",
+  "name": "compute-differential-pair-phase-skew",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tscircuit/circuit-json-to-differential-pair-phase-skew.git"
+    "url": "https://github.com/tscircuit/compute-differential-pair-phase-skew.git"
   },
   "module": "lib/index.ts",
   "types": "lib/index.ts",

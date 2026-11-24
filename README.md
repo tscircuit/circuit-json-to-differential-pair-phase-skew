@@ -1,4 +1,4 @@
-# circuit-json-to-differential-pair-phase-skew
+# compute-differential-pair-phase-skew
 
 ## What is it?
 
@@ -17,11 +17,11 @@ draw it.
 ## How to use it?
 
 ```bash
-bun add github:tscircuit/circuit-json-to-differential-pair-phase-skew
+bun add github:tscircuit/compute-differential-pair-phase-skew
 ```
 
 ```ts
-import { getDifferentialPairPhaseSkewStrokes } from "circuit-json-to-differential-pair-phase-skew"
+import { getDifferentialPairPhaseSkewStrokes } from "compute-differential-pair-phase-skew"
 
 const strokes = getDifferentialPairPhaseSkewStrokes(circuitJson, {
   colors: { zero: "#fff1bc" },
@@ -37,7 +37,7 @@ Colours default to `DEFAULT_PHASE_SKEW_COLORS`. Partial overrides accept
 warns and uses the corresponding default.
 
 ```ts
-import { getDifferentialPairPhaseSkew } from "circuit-json-to-differential-pair-phase-skew"
+import { getDifferentialPairPhaseSkew } from "compute-differential-pair-phase-skew"
 
 for (const pair of getDifferentialPairPhaseSkew({ circuitJson })) {
   pair.max_abs_phase_skew // largest phase skew magnitude on the pair, mm; absent when unknown everywhere
