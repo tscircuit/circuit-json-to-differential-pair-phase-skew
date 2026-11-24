@@ -151,6 +151,8 @@ function parseRgbChannel(channel: string): number | null {
   const digits = channel.trim()
   if (
     digits.length === 0 ||
+    digits.endsWith(".") ||
+    digits.includes(".e") ||
     Array.from(digits).some((digit) => !"0123456789+-.e".includes(digit))
   ) {
     return null
