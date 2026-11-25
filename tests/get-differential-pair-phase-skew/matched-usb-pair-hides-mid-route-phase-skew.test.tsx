@@ -2,6 +2,7 @@ import { expect, test } from "bun:test"
 import { runAllRoutingChecks } from "@tscircuit/checks"
 import { cju } from "@tscircuit/circuit-json-util"
 import { getDifferentialPairPhaseSkew } from "lib/index"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderCircuit } from "tests/fixtures/render-circuit"
 
@@ -82,12 +83,11 @@ test("matched USB trace totals hide 1.236 mm of mid-route phase skew", async () 
   expect(positive.trace_length).toBeCloseTo(25.2360679775, 9)
   expect(negative.trace_length).toBeCloseTo(25.2360679775, 9)
   expect(await runAllRoutingChecks(circuitJson)).toEqual([])
-  expect(getDifferentialPairPhaseSkew({ circuitJson })).toEqual([
-    expect.objectContaining({
-      max_abs_phase_skew: 1.23607,
-      end_to_end_length_delta: 0,
-      max_length_skew: 0.1,
-    }),
-  ])
+  const pairs = getDifferentialPairPhaseSkew({ circuitJson })
+  expect(pairs).toHaveLength(1)
+  expect(maximumAbsolutePhaseSkew(pairs[0])).toBe(1.23607)
+  expect(
+    pairs[0].positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBe(0)
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

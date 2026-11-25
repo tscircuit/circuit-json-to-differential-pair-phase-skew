@@ -5,6 +5,7 @@ import {
   DETOUR_EXTRA_LENGTH,
   renderDifferentialPairBoard,
 } from "tests/fixtures/differential-pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 
 test("reports the pair's largest phase skew and its maxLengthSkew", async () => {
@@ -14,8 +15,8 @@ test("reports the pair's largest phase skew and its maxLengthSkew", async () => 
   expect(pairs).toHaveLength(1)
   const [bus] = cju(circuitJson).source_bus.list()
   expect(pairs[0].source_bus_id).toBe(bus.source_bus_id)
-  expect(pairs[0].max_abs_phase_skew).toBeCloseTo(DETOUR_EXTRA_LENGTH, 5)
-  expect(pairs[0].max_length_skew).toBe(0.1)
+  expect(maximumAbsolutePhaseSkew(pairs[0])).toBeCloseTo(DETOUR_EXTRA_LENGTH, 5)
+  expect(bus.max_length_skew).toBe(0.1)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

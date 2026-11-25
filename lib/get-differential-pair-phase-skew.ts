@@ -6,6 +6,7 @@ import {
 import type {
   AnyCircuitElement,
   PcbBoard,
+  PcbDifferentialPairPhaseSkew,
   PcbPort,
   PcbTrace,
   SourceBus,
@@ -13,16 +14,11 @@ import type {
 import { pcb_board } from "circuit-json"
 import { clipRouteInsidePads } from "./clip-route-inside-pads"
 import { cutRouteTapers } from "./cut-route-tapers"
-import type {
-  DifferentialPairPhaseSkew,
-  PhaseSkewTrace,
-} from "./differential-pair-phase-skew"
 import { findCoupledRuns } from "./find-coupled-runs"
+import { getPhaseSkewSegments } from "./get-phase-skew-segments"
 import type { LayerChangeBoard } from "./get-layer-change-length"
-import { getPhaseSkewTrack, type PhaseSkewTrack } from "./get-phase-skew-track"
+import { getPhaseSkewTrack } from "./get-phase-skew-track"
 import { haveOppositeTraceWalkDirections } from "./have-opposite-trace-walk-directions"
-import { roundPhaseSkew } from "./round-phase-skew"
-import { samplePhaseSkew } from "./sample-phase-skew"
 import { reverseWalk, type TraceWalk, walkTrace } from "./walk-trace"
 
 /** Board thickness in mm assumed for a pair that is routed without a board. */
@@ -44,7 +40,9 @@ type PairWalks = { positive: TraceWalk; negative: TraceWalk }
  * Computes phase skew along every routed differential pair: at each point,
  * how much farther one trace has run than the other, not only at the ends.
  *
- * A pair is measured when each side is routed as exactly one `pcb_trace`;
+ * Each result is a Circuit JSON element with segments where phase skew is
+ * known. A pair is measured when its traces run side by side and each side
+ * is routed as exactly one `pcb_trace`;
  * a side routed as several doesn't record their order along the signal.
  *
  * Distances are copper length: planar length plus each layer change's
@@ -64,13 +62,13 @@ export function getDifferentialPairPhaseSkew({
   circuitJson,
 }: {
   circuitJson: AnyCircuitElement[]
-}): DifferentialPairPhaseSkew[] {
+}): PcbDifferentialPairPhaseSkew[] {
   const db = cju(circuitJson)
   const boardOwnerMap = createBoardOwnerMap(circuitJson)
-  const pairs: DifferentialPairPhaseSkew[] = []
+  const pairs: PcbDifferentialPairPhaseSkew[] = []
   for (const bus of db.source_bus.list()) {
     const differentialPair = bus.differential_pair
-    if (differentialPair === undefined) continue
+    if (differentialPair === undefined || !bus.source_bus_id.trim()) continue
     const { positive_source_trace_id, negative_source_trace_id } =
       differentialPair
     if (positive_source_trace_id === negative_source_trace_id) continue
@@ -84,6 +82,14 @@ export function getDifferentialPairPhaseSkew({
     const [positiveTrace] = positiveTraces
     const [negativeTrace] = negativeTraces
     if (!positiveTrace || !negativeTrace) continue
+    const positiveTraceId = positiveTrace.pcb_trace_id.trim()
+    const negativeTraceId = negativeTrace.pcb_trace_id.trim()
+    if (
+      !positiveTraceId ||
+      !negativeTraceId ||
+      positiveTraceId === negativeTraceId
+    )
+      continue
     const pairWalks = walkPair({
       positiveTrace,
       negativeTrace,
@@ -91,15 +97,14 @@ export function getDifferentialPairPhaseSkew({
       board: boardOwnerMap.get(positiveTrace.pcb_trace_id),
     })
     if (pairWalks === null) continue
-    pairs.push(
-      getPairPhaseSkew({
-        bus,
-        trace_gap: differentialPair.trace_gap,
-        positiveTrace,
-        negativeTrace,
-        pairWalks,
-      }),
-    )
+    const pair = getPairPhaseSkew({
+      bus,
+      trace_gap: differentialPair.trace_gap,
+      positiveTrace,
+      negativeTrace,
+      pairWalks,
+    })
+    if (pair !== null) pairs.push(pair)
   }
   return pairs
 }
@@ -118,53 +123,49 @@ function getPairPhaseSkew({
   positiveTrace: PcbTrace
   negativeTrace: PcbTrace
   pairWalks: PairWalks
-}): DifferentialPairPhaseSkew {
+}): PcbDifferentialPairPhaseSkew | null {
   const { positive, negative } = pairWalks
   const runs = findCoupledRuns({
     positive: positive.steps,
     negative: negative.steps,
     referenceGapMm: trace_gap,
   })
-  const positiveTrack = getPhaseSkewTrack({
-    runs,
-    side: "positive",
+  if (runs.length === 0) return null
+  const positiveSegments = getPhaseSkewSegments({
     steps: positive.steps,
-    partnerSteps: negative.steps,
-    length: positive.length,
+    spans: getPhaseSkewTrack({
+      runs,
+      side: "positive",
+      steps: positive.steps,
+      partnerSteps: negative.steps,
+    }),
   })
-  const negativeTrack = getPhaseSkewTrack({
-    runs,
-    side: "negative",
+  const negativeSegments = getPhaseSkewSegments({
     steps: negative.steps,
-    partnerSteps: positive.steps,
-    length: negative.length,
+    spans: getPhaseSkewTrack({
+      runs,
+      side: "negative",
+      steps: negative.steps,
+      partnerSteps: positive.steps,
+    }),
   })
-
-  const pair: DifferentialPairPhaseSkew = {
+  if (positiveSegments.length === 0 || negativeSegments.length === 0) {
+    return null
+  }
+  const pair: PcbDifferentialPairPhaseSkew = {
+    type: "pcb_differential_pair_phase_skew",
+    pcb_differential_pair_phase_skew_id: `pcb_differential_pair_phase_skew_${bus.source_bus_id}`,
     source_bus_id: bus.source_bus_id,
-    positive_trace: getPhaseSkewTrace({
-      trace: positiveTrace,
-      walk: positive,
-      track: positiveTrack,
-    }),
-    negative_trace: getPhaseSkewTrace({
-      trace: negativeTrace,
-      walk: negative,
-      track: negativeTrack,
-    }),
-    end_to_end_length_delta: roundPhaseSkew(positive.length - negative.length),
+    positive_trace: {
+      pcb_trace_id: positiveTrace.pcb_trace_id,
+      segments: positiveSegments,
+    },
+    negative_trace: {
+      pcb_trace_id: negativeTrace.pcb_trace_id,
+      segments: negativeSegments,
+    },
   }
-  if (bus.max_length_skew !== undefined) {
-    pair.max_length_skew = bus.max_length_skew
-  }
-  if (runs.length > 0) {
-    pair.max_abs_phase_skew = Math.max(
-      positiveTrack.range.maxPhaseSkewMm,
-      -positiveTrack.range.minPhaseSkewMm,
-      negativeTrack.range.maxPhaseSkewMm,
-      -negativeTrack.range.minPhaseSkewMm,
-    )
-  }
+  if (bus.subcircuit_id !== undefined) pair.subcircuit_id = bus.subcircuit_id
   return pair
 }
 
@@ -253,24 +254,6 @@ function getLayerChangeBoard({
     pcbStackup: db.pcb_stackup.getWhere({ pcb_board_id: board.pcb_board_id }),
     boardThickness: boardDimensions.data.thickness,
     copperLayerCount: boardDimensions.data.num_layers,
-  }
-}
-
-/** One trace's segments and phase skew range, as drawn. */
-function getPhaseSkewTrace({
-  trace,
-  walk,
-  track,
-}: {
-  trace: PcbTrace
-  walk: TraceWalk
-  track: PhaseSkewTrack
-}): PhaseSkewTrace {
-  return {
-    pcb_trace_id: trace.pcb_trace_id,
-    max_phase_skew: track.range.maxPhaseSkewMm,
-    min_phase_skew: track.range.minPhaseSkewMm,
-    segments: samplePhaseSkew({ steps: walk.steps, spans: track.spans }),
   }
 }
 

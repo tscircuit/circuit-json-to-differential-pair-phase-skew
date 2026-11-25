@@ -33,10 +33,9 @@ test("a board record without thickness or num_layers uses the pcb_board schema d
   const [pair] = getDifferentialPairPhaseSkew({
     circuitJson: circuitJsonWithoutBoardDimensions,
   })
-  expect(pair.end_to_end_length_delta).toBeCloseTo(
-    -2 * SCHEMA_DEFAULT_BOARD_THICKNESS_MM,
-    5,
-  )
+  expect(
+    pair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBeCloseTo(-2 * SCHEMA_DEFAULT_BOARD_THICKNESS_MM, 5)
   expect(pair.negative_trace.segments.map((segment) => segment.layer)).toEqual([
     "top",
     "bottom",

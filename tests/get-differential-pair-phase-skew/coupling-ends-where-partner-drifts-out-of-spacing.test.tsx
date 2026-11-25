@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 test("coupling stops partway along a step where the partner drifts out of spacing", async () => {
   // DN slants from 0.70 mm to 0.98 mm away from DP between x = -10 and
@@ -22,10 +22,10 @@ test("coupling stops partway along a step where the partner drifts out of spacin
   // Measured up to x = 4.3 (by x = 0 DN's 0.1 mm entry jog has added
   // 2.50 µm and its slant 0.98 µm), and unknown after it.
   expect(
-    segmentAtX({ segments: pair.positive_trace.segments, x: 0 }).phase_skew,
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0 }),
   ).toBeCloseTo(-0.00348, 5)
   expect(
-    segmentAtX({ segments: pair.positive_trace.segments, x: 5 }).phase_skew,
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 5 }),
   ).toBeUndefined()
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)

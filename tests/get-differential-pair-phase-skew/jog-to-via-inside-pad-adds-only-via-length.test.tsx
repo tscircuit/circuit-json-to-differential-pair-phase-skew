@@ -20,7 +20,9 @@ test("a jog up to a via inside the source pad adds only the via's layer change",
 
   const boardThickness = cju(circuitJson).pcb_board.list()[0].thickness
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  expect(pair.end_to_end_length_delta).toBeCloseTo(2 * boardThickness, 5)
+  expect(
+    pair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBeCloseTo(2 * boardThickness, 5)
   const [firstPositiveSegment] = pair.positive_trace.segments
   expect(firstPositiveSegment.start).toEqual({ x: -9, y: 1 })
   expect(firstPositiveSegment.end).toEqual({ x: -8.6, y: 1 })

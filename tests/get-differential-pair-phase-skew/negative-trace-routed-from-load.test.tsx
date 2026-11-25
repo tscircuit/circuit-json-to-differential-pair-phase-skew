@@ -3,7 +3,7 @@ import { cju } from "@tscircuit/circuit-json-util"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 test("a negative trace routed from its load pad still lines up", async () => {
   const circuitJson = await renderPairBoard({
@@ -28,10 +28,10 @@ test("a negative trace routed from its load pad still lines up", async () => {
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
   expect(
-    segmentAtX({ segments: pair.positive_trace.segments, x: 0 }).phase_skew,
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0 }),
   ).toBeCloseTo(1.23607, 5)
   expect(
-    segmentAtX({ segments: pair.negative_trace.segments, x: 0 }).phase_skew,
+    phaseSkewAtX({ segments: pair.negative_trace.segments, x: 0 }),
   ).toBeCloseTo(-1.23607, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)

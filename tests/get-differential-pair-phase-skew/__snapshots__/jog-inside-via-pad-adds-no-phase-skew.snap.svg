@@ -4,14 +4,13 @@
     <line x1="-12" y1="0.3" x2="-0.13000000000000078" y2="0.3" stroke="#8d6448" stroke-width="0.15"/>
     <line x1="-0.13000000000000078" y1="0.3" x2="-0.09999999999999964" y2="0.37" stroke="#8d6448" stroke-width="0.15"/>
     <line x1="-12" y1="-0.3" x2="-0.13000000000000078" y2="-0.3" stroke="#8d6448" stroke-width="0.15"/>
-    <line x1="-12" y1="0.3" x2="0" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-12" y1="0.3" x2="0" y2="0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
-    <line x1="0" y1="0.3" x2="12.000000000000004" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="0" y1="0.3" x2="12.000000000000004" y2="0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
-    <line x1="-12" y1="-0.3" x2="0" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-12" y1="-0.3" x2="0" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
-    <line x1="0" y1="-0.3" x2="12.000000000000004" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="0" y1="-0.3" x2="12.000000000000004" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
+    <line x1="-12" y1="0.3" x2="-0.13000000000000078" y2="0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-0.13000000000000078" y1="0.3" x2="-0.09999999999999964" y2="0.37" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-12" y1="-0.3" x2="-0.13000000000000078" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-12" y1="0.3" x2="0" y2="0.3" stroke-width="0.165" stroke="white"/>
+    <line x1="0" y1="0.3" x2="12" y2="0.3" stroke-width="0.165" stroke="white"/>
+    <line x1="-12" y1="-0.3" x2="0" y2="-0.3" stroke-width="0.165" stroke="white"/>
+    <line x1="0" y1="-0.3" x2="12" y2="-0.3" stroke-width="0.165" stroke="white"/>
     <circle cx="0" cy="0.3" r="0.15" fill="none" stroke="#ead9bd" stroke-width="0.07"/>
     <circle cx="0" cy="-0.3" r="0.15" fill="none" stroke="#ead9bd" stroke-width="0.07"/>
   </g>

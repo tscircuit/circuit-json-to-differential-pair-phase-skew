@@ -1,8 +1,9 @@
 import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { type PairPathPoint, renderPairBoard } from "tests/fixtures/pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 /** Extra length of each 2 mm × 2.4 mm fan-in / fan-out diagonal on DN. */
 const FAN_DIAGONAL_EXTRA = Math.hypot(2, 2.4) - 2
@@ -45,23 +46,30 @@ test("a straight trace running into wider pads still couples at both pad fan-out
   const [kinked] = getDifferentialPairPhaseSkew({ circuitJson: kinkedJson })
 
   for (const pair of [straight, kinked]) {
-    const startFanout = segmentAtX({
-      segments: pair.positive_trace.segments,
-      x: -10,
-    })
-    const middle = segmentAtX({ segments: pair.positive_trace.segments, x: 0 })
-    const endFanout = segmentAtX({
-      segments: pair.positive_trace.segments,
-      x: 10,
-    })
-
-    expect(startFanout.phase_skew).toBe(0)
-    expect(middle.phase_skew).toBeCloseTo(-FAN_DIAGONAL_EXTRA, 5)
-    expect(endFanout.phase_skew).toBeCloseTo(-2 * FAN_DIAGONAL_EXTRA, 5)
-    expect(pair.max_abs_phase_skew).toBeCloseTo(2 * FAN_DIAGONAL_EXTRA, 5)
+    expect(
+      phaseSkewAtX({
+        segments: pair.positive_trace.segments,
+        x: -10,
+      }),
+    ).toBe(0)
+    expect(
+      phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0 }),
+    ).toBeCloseTo(-FAN_DIAGONAL_EXTRA, 5)
+    expect(
+      phaseSkewAtX({
+        segments: pair.positive_trace.segments,
+        x: 10,
+      }),
+    ).toBeCloseTo(-2 * FAN_DIAGONAL_EXTRA, 5)
+    expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(
+      2 * FAN_DIAGONAL_EXTRA,
+      5,
+    )
   }
 
-  expect(straight.max_abs_phase_skew).toBe(kinked.max_abs_phase_skew)
+  expect(maximumAbsolutePhaseSkew(straight)).toBe(
+    maximumAbsolutePhaseSkew(kinked),
+  )
 
   await expect(phaseSkewSvg(straightJson)).toMatchSvgSnapshot(import.meta.path)
 })

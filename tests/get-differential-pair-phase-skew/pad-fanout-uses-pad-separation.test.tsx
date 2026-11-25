@@ -1,8 +1,9 @@
 import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 /** Extra length added by each 0.9 mm square detour on the fan-in/fan-out. */
 const FANOUT_DETOUR_EXTRA = 2 * 0.9
@@ -41,27 +42,35 @@ test("parallel stretches leaving wider source and load pads couple at each end's
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
-  const startFanout = segmentAtX({
-    segments: pair.positive_trace.segments,
-    x: -10.5,
-  })
-  const mainRun = segmentAtX({ segments: pair.positive_trace.segments, x: 0 })
-  const loadDetour = segmentAtX({
-    segments: pair.positive_trace.segments,
-    x: 8.75,
-  })
-  const endFanout = segmentAtX({
-    segments: pair.positive_trace.segments,
-    x: 10.5,
-  })
-
-  expect(startFanout.phase_skew).toBe(0)
-  expect(mainRun.phase_skew).toBeCloseTo(FANOUT_DETOUR_EXTRA, 5)
+  expect(
+    phaseSkewAtX({
+      segments: pair.positive_trace.segments,
+      x: -10.5,
+    }),
+  ).toBe(0)
+  expect(
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0 }),
+  ).toBeCloseTo(FANOUT_DETOUR_EXTRA, 5)
   // Uncoupled, DN's detour ramps in instead of being measured right away.
-  expect(loadDetour.phase_skew).toBeGreaterThan(0)
-  expect(loadDetour.phase_skew).toBeLessThan(FANOUT_DETOUR_EXTRA)
-  expect(endFanout.phase_skew).toBe(0)
-  expect(pair.max_abs_phase_skew).toBeCloseTo(FANOUT_DETOUR_EXTRA, 5)
+  expect(
+    phaseSkewAtX({
+      segments: pair.positive_trace.segments,
+      x: 8.75,
+    }),
+  ).toBeGreaterThan(0)
+  expect(
+    phaseSkewAtX({
+      segments: pair.positive_trace.segments,
+      x: 8.75,
+    }),
+  ).toBeLessThan(FANOUT_DETOUR_EXTRA)
+  expect(
+    phaseSkewAtX({
+      segments: pair.positive_trace.segments,
+      x: 10.5,
+    }),
+  ).toBe(0)
+  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(FANOUT_DETOUR_EXTRA, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

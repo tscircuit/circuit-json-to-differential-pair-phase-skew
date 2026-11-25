@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX, segmentAtX } from "tests/fixtures/segment-at-x"
 
 test("the spacing allowance uses the mean of the two trace widths", async () => {
   // DP is 0.45 mm wide, DN 0.15 mm, gap 0.25 mm: the traces count as
@@ -22,12 +22,14 @@ test("the spacing allowance uses the mean of the two trace widths", async () => 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
   const beside = segmentAtX({ segments: pair.positive_trace.segments, x: -9 })
-  expect(beside.phase_skew).toBe(0)
-  expect(beside.width).toBe(0.45)
+  expect(phaseSkewAtX({ segments: pair.positive_trace.segments, x: -9 })).toBe(
+    0,
+  )
+  expect(beside?.width).toBe(0.45)
   // Measured, DN would already be 0.1 mm ahead from its first jog at x = -6.
   // Uncoupled, the 0.2 mm the two jogs add ramps in over DP's 12 mm.
   expect(
-    segmentAtX({ segments: pair.positive_trace.segments, x: -3 }).phase_skew,
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: -3 }),
   ).toBeCloseTo(-0.05, 2)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)

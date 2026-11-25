@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 
 /** DN's slanted 20 mm run is this much longer than DP's straight one, in mm. */
@@ -20,14 +21,13 @@ test("a slightly slanted partner keeps the skew it builds along the run", async 
 
   // The run's skew grows from 0 to the slant's extra length; the maximum
   // comes from its end, not its middle.
-  expect(pair.max_abs_phase_skew).toBeCloseTo(SLANT_EXTRA_LENGTH, 5)
-  // A change this small (0.25 µm) takes one piece per 10 nm of phase skew,
-  // 26 pieces instead of one every 0.05 mm (400).
+  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(SLANT_EXTRA_LENGTH, 5)
   const slanted = pair.negative_trace.segments.filter(
-    (segment) =>
-      segment.phase_skew !== undefined && segment.start.y !== segment.end.y,
+    (segment) => segment.start.y !== segment.end.y,
   )
-  expect(slanted).toHaveLength(26)
+  expect(slanted).toHaveLength(1)
+  expect(slanted[0].start_length_difference_mm).toBe(0)
+  expect(slanted[0].end_length_difference_mm).toBeCloseTo(SLANT_EXTRA_LENGTH, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

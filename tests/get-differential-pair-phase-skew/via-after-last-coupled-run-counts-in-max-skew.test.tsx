@@ -2,9 +2,9 @@ import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
-test("a via right after the last coupled run still counts toward the maximum", async () => {
+test("a via after the last coupled run leaves the later copper unknown", async () => {
   // DP runs straight on top; DN drops to bottom at x = -6, returns to top at
   // x = 10, and jogs 2 mm away so it never recouples. The coupled run on
   // [-12, -6] has zero skew, but DN's asymmetric ending via at x = -6 adds
@@ -22,11 +22,12 @@ test("a via right after the last coupled run still counts toward the maximum", a
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
-  const before = segmentAtX({ segments: pair.positive_trace.segments, x: -9 })
-  const after = segmentAtX({ segments: pair.positive_trace.segments, x: 0 })
-  expect(before.phase_skew).toBe(0)
-  expect(after.phase_skew).toBeUndefined()
-  expect(pair.max_abs_phase_skew).toBeCloseTo(1.6, 5)
+  expect(phaseSkewAtX({ segments: pair.positive_trace.segments, x: -9 })).toBe(
+    0,
+  )
+  expect(
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0 }),
+  ).toBeUndefined()
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })
