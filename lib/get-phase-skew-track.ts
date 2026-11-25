@@ -1,3 +1,4 @@
+import { blendTouchingRuns } from "./blend-touching-runs"
 import { type CoupledRun, MIN_OVERLAP } from "./select-coupled-runs"
 import type { TraceStep } from "./walk-trace"
 
@@ -28,7 +29,7 @@ type PairSide = "positive" | "negative"
  * and on its partner, the phase skew at each end, and the length of any
  * layer change right at each end on either trace, all in mm.
  */
-type SideRun = {
+export type SideRun = {
   startWalkDistanceMm: number
   endWalkDistanceMm: number
   partnerStartWalkDistanceMm: number
@@ -59,18 +60,32 @@ export function getPhaseSkewTrack({
 }): PhaseSkewSpan[] {
   const sideRuns = getSideRuns({ runs, side, steps, partnerSteps })
   const spans: PhaseSkewSpan[] = []
+  let previousBlend: PhaseSkewSpan | null = null
   for (const [index, run] of sideRuns.entries()) {
     const previous = sideRuns[index - 1]
+    const next = sideRuns[index + 1]
+    let nextBlend: PhaseSkewSpan | null = null
+    if (next !== undefined)
+      nextBlend = blendTouchingRuns({ previous: run, next })
     if (previous !== undefined) {
-      const unmatchedSpan = interpolateUnmatchedSpan({ previous, run })
-      if (unmatchedSpan !== null) spans.push(unmatchedSpan)
+      const between =
+        previousBlend ?? interpolateUnmatchedSpan({ previous, run })
+      if (
+        between &&
+        between.endWalkDistanceMm - between.startWalkDistanceMm > MIN_OVERLAP
+      ) {
+        spans.push(between)
+      }
     }
     spans.push({
-      startWalkDistanceMm: run.startWalkDistanceMm,
-      endWalkDistanceMm: run.endWalkDistanceMm,
-      startPhaseSkewMm: run.startPhaseSkewMm,
-      endPhaseSkewMm: run.endPhaseSkewMm,
+      startWalkDistanceMm:
+        previousBlend?.endWalkDistanceMm ?? run.startWalkDistanceMm,
+      endWalkDistanceMm:
+        nextBlend?.startWalkDistanceMm ?? run.endWalkDistanceMm,
+      startPhaseSkewMm: previousBlend?.endPhaseSkewMm ?? run.startPhaseSkewMm,
+      endPhaseSkewMm: nextBlend?.startPhaseSkewMm ?? run.endPhaseSkewMm,
     })
+    previousBlend = nextBlend
   }
   return spans
 }
