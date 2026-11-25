@@ -10,6 +10,15 @@
     <line x1="-4" y1="-0.6" x2="-4" y2="-0.3" stroke="#8d6448" stroke-width="0.15"/>
     <line x1="-4" y1="-0.3" x2="12" y2="-0.3" stroke="#8d6448" stroke-width="0.15"/>
     <line x1="12" y1="-0.3" x2="12" y2="-0.3" stroke="#8d6448" stroke-width="0.15"/>
+    <line x1="-12" y1="0.3" x2="12" y2="0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-12" y1="-0.3" x2="-11.5" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-11.5" y1="-0.3" x2="-11.5" y2="-0.8999999999999999" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-11.5" y1="-0.8999999999999999" x2="2" y2="-0.8999999999999999" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="2" y1="-0.8999999999999999" x2="2" y2="-0.6" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="2" y1="-0.6" x2="-4" y2="-0.6" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-4" y1="-0.6" x2="-4" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-4" y1="-0.3" x2="12" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="12" y1="-0.3" x2="12" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
     <line x1="-12" y1="0.3" x2="-11.5" y2="0.3" stroke-width="0.165" stroke="white"/>
     <line x1="-11.5" y1="0.3" x2="-4" y2="0.3" stroke-width="0.165" stroke="rgb(255,243,243)"/>
     <line x1="-4" y1="0.3" x2="12" y2="0.3" stroke-width="0.165" stroke="rgb(255,0,0)"/>
@@ -22,5 +31,5 @@
     <linearGradient id="phase-skew-1-6" gradientUnits="userSpaceOnUse" x1="-4" y1="-0.6" x2="-4" y2="-0.3"><stop offset="0" stop-color="rgb(6,6,255)"/><stop offset="1" stop-color="rgb(0,0,255)"/></linearGradient><line x1="-4" y1="-0.6" x2="-4" y2="-0.3" stroke-width="0.165" stroke="url(#phase-skew-1-6)"/>
     <line x1="-4" y1="-0.3" x2="12" y2="-0.3" stroke-width="0.165" stroke="rgb(0,0,255)"/>
   </g>
-  <text x="-12.7" y="-0.8200000000000001" font-family="sans-serif" font-size="0.32" fill="#fff">Peak phase skew magnitude (mm): 13.20000. Blue: ahead. Red: behind. White: in step. Copper: unknown.</text>
+  <text x="-12.7" y="-0.8200000000000001" font-family="sans-serif" font-size="0.32" fill="#fff">Peak phase skew magnitude (mm): 13.20000. Blue: ahead. Red: behind. White: in step. Grey: unknown.</text>
 </svg>

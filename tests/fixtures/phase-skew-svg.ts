@@ -16,14 +16,17 @@ import {
 /** Overlay stroke width relative to the trace, matching KiCad's 1.1× inflation. */
 const OVERLAY_WIDTH_FACTOR = 1.1
 
+/** KiCad's colour for copper whose phase skew is unknown. */
+const UNKNOWN_COLOR = "rgb(128,128,128)"
+
 /** SVG pixels per mm. */
 const PIXELS_PER_MM = 40
 
 /**
  * Draws the routed copper with each pair's phase skew on top, coloured as
  * KiCad does: white in step, blending to blue where a trace is ahead of its
- * partner and red where it is behind, scaled per trace and sign. Copper
- * without a phase skew segment keeps its original colour.
+ * partner and red where it is behind, scaled per trace and sign. A measured
+ * pair's copper without a phase skew segment is grey, as KiCad shows unknown.
  */
 export function phaseSkewSvg(circuitJson: AnyCircuitElement[]): string {
   const db = cju(circuitJson)
@@ -65,6 +68,26 @@ export function phaseSkewSvg(circuitJson: AnyCircuitElement[]): string {
     pair.positive_trace,
     pair.negative_trace,
   ])
+  const phaseSkewTraceIds = new Set(
+    phaseSkewTraces.map(({ pcb_trace_id }) => pcb_trace_id),
+  )
+  const unknown = traces
+    .filter(({ pcb_trace_id }) => phaseSkewTraceIds.has(pcb_trace_id))
+    .flatMap((trace) =>
+      trace.route.flatMap((point, index) => {
+        const from = trace.route[index - 1]
+        if (
+          point.route_type !== "wire" ||
+          from?.route_type !== "wire" ||
+          from.layer !== point.layer
+        ) {
+          return []
+        }
+        return [
+          `<line x1="${from.x}" y1="${from.y}" x2="${point.x}" y2="${point.y}" stroke="${UNKNOWN_COLOR}" stroke-width="${point.width * OVERLAY_WIDTH_FACTOR}"/>`,
+        ]
+      }),
+    )
   const overlay = phaseSkewTraces.flatMap((trace, traceIndex) => {
     const endpoints = phaseSkewEndpoints(trace)
     const max = Math.max(0, ...endpoints)
@@ -84,9 +107,9 @@ export function phaseSkewSvg(circuitJson: AnyCircuitElement[]): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.ceil(width * PIXELS_PER_MM)}" height="${Math.ceil(height * PIXELS_PER_MM)}" viewBox="${minX} ${-maxY} ${width} ${height}">
   <rect x="${minX}" y="${-maxY}" width="${width}" height="${height}" fill="#182124"/>
   <g transform="scale(1 -1)">
-    ${[...copper, ...overlay, ...vias].join("\n    ")}
+    ${[...copper, ...unknown, ...overlay, ...vias].join("\n    ")}
   </g>
-  <text x="${minX + 0.3}" y="${-maxY + 0.48}" font-family="sans-serif" font-size="0.32" fill="#fff">Peak phase skew magnitude (mm): ${formattedPeakPhaseSkewsMm || "no measurable pairs"}. Blue: ahead. Red: behind. White: in step. Copper: unknown.</text>
+  <text x="${minX + 0.3}" y="${-maxY + 0.48}" font-family="sans-serif" font-size="0.32" fill="#fff">Peak phase skew magnitude (mm): ${formattedPeakPhaseSkewsMm || "no measurable pairs"}. Blue: ahead. Red: behind. White: in step. Grey: unknown.</text>
 </svg>`
 }
 

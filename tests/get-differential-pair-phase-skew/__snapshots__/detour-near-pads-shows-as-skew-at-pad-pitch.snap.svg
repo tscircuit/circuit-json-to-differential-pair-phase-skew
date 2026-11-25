@@ -15,6 +15,20 @@
     <line x1="-9.85" y1="-0.15" x2="4" y2="-0.15" stroke="#8d6448" stroke-width="0.15"/>
     <line x1="4" y1="-0.15" x2="4.149999999999999" y2="-0.3" stroke="#8d6448" stroke-width="0.15"/>
     <line x1="4.149999999999999" y1="-0.3" x2="12" y2="-0.3" stroke="#8d6448" stroke-width="0.15"/>
+    <line x1="-12" y1="0.3" x2="-10" y2="0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-10" y1="0.3" x2="-9.85" y2="0.15" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-9.85" y1="0.15" x2="4" y2="0.15" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="4" y1="0.15" x2="4.149999999999999" y2="0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="4.149999999999999" y1="0.3" x2="6" y2="0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="6" y1="0.3" x2="6" y2="2.5225" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="6" y1="2.5225" x2="8" y2="2.5225" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="8" y1="2.5225" x2="8" y2="0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="8" y1="0.3" x2="12" y2="0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-12" y1="-0.3" x2="-10" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-10" y1="-0.3" x2="-9.85" y2="-0.15" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-9.85" y1="-0.15" x2="4" y2="-0.15" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="4" y1="-0.15" x2="4.149999999999999" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="4.149999999999999" y1="-0.3" x2="12" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
     <line x1="-12" y1="0.3" x2="-10" y2="0.3" stroke-width="0.165" stroke="white"/>
     <line x1="-10" y1="0.3" x2="-9.85" y2="0.15" stroke-width="0.165" stroke="white"/>
     <line x1="-9.85" y1="0.15" x2="4" y2="0.15" stroke-width="0.165" stroke="white"/>
@@ -32,5 +46,5 @@
     <linearGradient id="phase-skew-1-5" gradientUnits="userSpaceOnUse" x1="6" y1="-0.3" x2="8" y2="-0.3"><stop offset="0" stop-color="white"/><stop offset="1" stop-color="rgb(255,0,0)"/></linearGradient><line x1="6" y1="-0.3" x2="8" y2="-0.3" stroke-width="0.165" stroke="url(#phase-skew-1-5)"/>
     <line x1="8" y1="-0.3" x2="12" y2="-0.3" stroke-width="0.165" stroke="rgb(255,0,0)"/>
   </g>
-  <text x="-12.7" y="-3.0425" font-family="sans-serif" font-size="0.32" fill="#fff">Peak phase skew magnitude (mm): 4.44500. Blue: ahead. Red: behind. White: in step. Copper: unknown.</text>
+  <text x="-12.7" y="-3.0425" font-family="sans-serif" font-size="0.32" fill="#fff">Peak phase skew magnitude (mm): 4.44500. Blue: ahead. Red: behind. White: in step. Grey: unknown.</text>
 </svg>
