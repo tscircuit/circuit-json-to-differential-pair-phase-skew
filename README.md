@@ -1,4 +1,4 @@
-# circuit-json-to-differential-pair-phase-skew
+# compute-differential-pair-phase-skew
 
 ## What is it?
 
@@ -20,7 +20,7 @@ bun add github:tscircuit/compute-differential-pair-phase-skew
 ```
 
 ```ts
-import { getDifferentialPairPhaseSkew } from "circuit-json-to-differential-pair-phase-skew"
+import { getDifferentialPairPhaseSkew } from "compute-differential-pair-phase-skew"
 
 const phaseSkews = getDifferentialPairPhaseSkew({ circuitJson })
 ```

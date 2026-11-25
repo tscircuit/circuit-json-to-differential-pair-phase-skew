@@ -1,6 +1,6 @@
 # Publishes each push to main as a GitHub Release with a tarball of the TypeScript source attached.
 # Install a release with:
-#   bun add https://github.com/tscircuit/circuit-json-to-differential-pair-phase-skew/releases/download/v<version>/circuit-json-to-differential-pair-phase-skew-<version>.tgz
+#   bun add https://github.com/tscircuit/compute-differential-pair-phase-skew/releases/download/v<version>/compute-differential-pair-phase-skew-<version>.tgz
 name: GitHub Release
 on:
   push:
@@ -46,7 +46,7 @@ jobs:
       - name: Create the tag and GitHub Release
         run: |
           VERSION=${{ steps.pack.outputs.version }}
-          TARBALL="circuit-json-to-differential-pair-phase-skew-$VERSION.tgz"
+          TARBALL="compute-differential-pair-phase-skew-$VERSION.tgz"
           gh release create "v$VERSION" "$TARBALL" \
             --target "$(git rev-parse HEAD)" \
             --title "v$VERSION" \
