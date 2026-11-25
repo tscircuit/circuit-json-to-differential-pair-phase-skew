@@ -2,8 +2,9 @@ import { expect, test } from "bun:test"
 import { cju } from "@tscircuit/circuit-json-util"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 test("without a stackup, each via is as long as the board is thick", async () => {
   // A 0.8 mm board with no pcb_stackup: DN hops top -> bottom -> top.
@@ -20,9 +21,11 @@ test("without a stackup, each via is as long as the board is thick", async () =>
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
   const { segments } = pair.positive_trace
-  expect(segmentAtX({ segments, x: 0 }).phase_skew).toBeCloseTo(-0.8, 5)
-  expect(segmentAtX({ segments, x: 9 }).phase_skew).toBeCloseTo(-1.6, 5)
-  expect(pair.max_abs_phase_skew).toBeCloseTo(1.6, 5)
-  expect(pair.end_to_end_length_delta).toBeCloseTo(-1.6, 5)
+  expect(phaseSkewAtX({ segments, x: 0 })).toBeCloseTo(-0.8, 5)
+  expect(phaseSkewAtX({ segments, x: 9 })).toBeCloseTo(-1.6, 5)
+  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(1.6, 5)
+  expect(
+    pair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBeCloseTo(-1.6, 5)
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

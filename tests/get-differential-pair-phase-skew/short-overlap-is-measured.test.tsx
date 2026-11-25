@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 test("a 0.02 mm stretch beside the partner is measured, not lost between samples", async () => {
   // DN leaves DP at x = -11, returns beside it only for 0 <= x <= 0.02,
@@ -23,9 +23,10 @@ test("a 0.02 mm stretch beside the partner is measured, not lost between samples
   })
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
-  const short = segmentAtX({ segments: pair.positive_trace.segments, x: 0.01 })
   // DN has run 1 + 3 + 11 + 3 mm more than DP's 12 mm to reach x = 0.
-  expect(short.phase_skew).toBeCloseTo(-6, 5)
+  expect(
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0.01 }),
+  ).toBeCloseTo(-6, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

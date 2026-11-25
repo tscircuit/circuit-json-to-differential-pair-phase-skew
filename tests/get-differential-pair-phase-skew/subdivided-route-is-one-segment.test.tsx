@@ -15,7 +15,7 @@ test("a straight route split into many points is measured as one segment", async
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
   expect(pair.positive_trace.segments).toHaveLength(1)
-  expect(pair.positive_trace.segments[0].phase_skew).toBe(0)
+  expect(pair.positive_trace.segments[0].start_length_difference_mm).toBe(0)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

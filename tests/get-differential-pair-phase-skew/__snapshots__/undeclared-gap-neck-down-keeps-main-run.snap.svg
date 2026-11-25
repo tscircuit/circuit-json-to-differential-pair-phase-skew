@@ -7,46 +7,20 @@
     <line x1="-2" y1="0" x2="-1" y2="0" stroke="#8d6448" stroke-width="0.15"/>
     <line x1="-1" y1="0" x2="-1" y2="-0.3" stroke="#8d6448" stroke-width="0.15"/>
     <line x1="-1" y1="-0.3" x2="12" y2="-0.3" stroke="#8d6448" stroke-width="0.15"/>
-    <line x1="-12" y1="0.3" x2="-2" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-12" y1="0.3" x2="-2" y2="0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
-    <line x1="-2" y1="0.3" x2="-1" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-2" y1="0.3" x2="-1" y2="0.3" stroke-width="0.165" stroke="rgb(255, 0, 0)" stroke-opacity="0.5"/>
-    <line x1="-1" y1="0.3" x2="12" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-1" y1="0.3" x2="12" y2="0.3" stroke-width="0.165" stroke="rgb(255, 0, 0)" stroke-opacity="1"/>
-    <line x1="-12" y1="-0.3" x2="-2" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-12" y1="-0.3" x2="-2" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
-    <line x1="-2" y1="-0.3" x2="-2" y2="-0.2571428571428573" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-2" y1="-0.3" x2="-2" y2="-0.2571428571428573" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.03571666666666667"/>
-    <line x1="-2" y1="-0.2571428571428573" x2="-2" y2="-0.21428571428571458" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-2" y1="-0.2571428571428573" x2="-2" y2="-0.21428571428571458" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.10715000000000001"/>
-    <line x1="-2" y1="-0.21428571428571458" x2="-2" y2="-0.17142857142857187" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-2" y1="-0.21428571428571458" x2="-2" y2="-0.17142857142857187" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.17856666666666668"/>
-    <line x1="-2" y1="-0.17142857142857187" x2="-2" y2="-0.12857142857142737" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-2" y1="-0.17142857142857187" x2="-2" y2="-0.12857142857142737" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.25"/>
-    <line x1="-2" y1="-0.12857142857142737" x2="-2" y2="-0.08571428571428466" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-2" y1="-0.12857142857142737" x2="-2" y2="-0.08571428571428466" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.32143333333333335"/>
-    <line x1="-2" y1="-0.08571428571428466" x2="-2" y2="-0.04285714285714198" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-2" y1="-0.08571428571428466" x2="-2" y2="-0.04285714285714198" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.39285000000000003"/>
-    <line x1="-2" y1="-0.04285714285714198" x2="-2" y2="7.216449660063518e-16" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-2" y1="-0.04285714285714198" x2="-2" y2="7.216449660063518e-16" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.4642833333333333"/>
-    <line x1="-2" y1="0" x2="-1" y2="0" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-2" y1="0" x2="-1" y2="0" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.5"/>
-    <line x1="-1" y1="0" x2="-1" y2="-0.042857142857142705" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-1" y1="0" x2="-1" y2="-0.042857142857142705" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.5357166666666667"/>
-    <line x1="-1" y1="-0.042857142857142705" x2="-1" y2="-0.08571428571428541" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-1" y1="-0.042857142857142705" x2="-1" y2="-0.08571428571428541" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.6071500000000001"/>
-    <line x1="-1" y1="-0.08571428571428541" x2="-1" y2="-0.12857142857142811" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-1" y1="-0.08571428571428541" x2="-1" y2="-0.12857142857142811" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.6785666666666667"/>
-    <line x1="-1" y1="-0.12857142857142811" x2="-1" y2="-0.17142857142857262" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-1" y1="-0.12857142857142811" x2="-1" y2="-0.17142857142857262" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.75"/>
-    <line x1="-1" y1="-0.17142857142857262" x2="-1" y2="-0.21428571428571533" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-1" y1="-0.17142857142857262" x2="-1" y2="-0.21428571428571533" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.8214333333333333"/>
-    <line x1="-1" y1="-0.21428571428571533" x2="-1" y2="-0.257142857142858" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-1" y1="-0.21428571428571533" x2="-1" y2="-0.257142857142858" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.89285"/>
-    <line x1="-1" y1="-0.257142857142858" x2="-1" y2="-0.3000000000000007" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-1" y1="-0.257142857142858" x2="-1" y2="-0.3000000000000007" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.9642833333333334"/>
-    <line x1="-1" y1="-0.3" x2="12" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-1" y1="-0.3" x2="12" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="1"/>
+    <line x1="-12" y1="0.3" x2="12" y2="0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-12" y1="-0.3" x2="-2" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-2" y1="-0.3" x2="-2" y2="0" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-2" y1="0" x2="-1" y2="0" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-1" y1="0" x2="-1" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-1" y1="-0.3" x2="12" y2="-0.3" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <line x1="-12" y1="0.3" x2="-2" y2="0.3" stroke-width="0.165" stroke="white"/>
+    <line x1="-2" y1="0.3" x2="-1" y2="0.3" stroke-width="0.165" stroke="rgb(255,128,128)"/>
+    <line x1="-1" y1="0.3" x2="12" y2="0.3" stroke-width="0.165" stroke="rgb(255,0,0)"/>
+    <line x1="-12" y1="-0.3" x2="-2" y2="-0.3" stroke-width="0.165" stroke="white"/>
+    <linearGradient id="phase-skew-1-1" gradientUnits="userSpaceOnUse" x1="-2" y1="-0.3" x2="-2" y2="0"><stop offset="0" stop-color="white"/><stop offset="1" stop-color="rgb(128,128,255)"/></linearGradient><line x1="-2" y1="-0.3" x2="-2" y2="0" stroke-width="0.165" stroke="url(#phase-skew-1-1)"/>
+    <line x1="-2" y1="0" x2="-1" y2="0" stroke-width="0.165" stroke="rgb(128,128,255)"/>
+    <linearGradient id="phase-skew-1-3" gradientUnits="userSpaceOnUse" x1="-1" y1="0" x2="-1" y2="-0.3"><stop offset="0" stop-color="rgb(128,128,255)"/><stop offset="1" stop-color="rgb(0,0,255)"/></linearGradient><line x1="-1" y1="0" x2="-1" y2="-0.3" stroke-width="0.165" stroke="url(#phase-skew-1-3)"/>
+    <line x1="-1" y1="-0.3" x2="12" y2="-0.3" stroke-width="0.165" stroke="rgb(0,0,255)"/>
   </g>
   <text x="-12.7" y="-0.8200000000000001" font-family="sans-serif" font-size="0.32" fill="#fff">Peak phase skew magnitude (mm): 0.60000. Blue: ahead. Red: behind. White: in step. Grey: unknown.</text>
 </svg>

@@ -1,8 +1,9 @@
 import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 /** Extra copper added by the 0.5 µm triangular jog (~0.00041 mm, below 0.0005 mm). */
 const JOG_EXTRA_LENGTH = 2 * Math.hypot(0.0005, 0.0005) - 0.001
@@ -21,18 +22,20 @@ test("a sub-micron jog retains signed phase skew in the calculation output", asy
   })
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  expect(pair.max_abs_phase_skew).toBeCloseTo(JOG_EXTRA_LENGTH, 5)
+  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(JOG_EXTRA_LENGTH, 5)
 
-  const positiveAfter = segmentAtX({
-    segments: pair.positive_trace.segments,
-    x: 5,
-  })
-  const negativeAfter = segmentAtX({
-    segments: pair.negative_trace.segments,
-    x: 5,
-  })
-  expect(positiveAfter.phase_skew).toBeCloseTo(JOG_EXTRA_LENGTH, 5)
-  expect(negativeAfter.phase_skew).toBeCloseTo(-JOG_EXTRA_LENGTH, 5)
+  expect(
+    phaseSkewAtX({
+      segments: pair.positive_trace.segments,
+      x: 5,
+    }),
+  ).toBeCloseTo(JOG_EXTRA_LENGTH, 5)
+  expect(
+    phaseSkewAtX({
+      segments: pair.negative_trace.segments,
+      x: 5,
+    }),
+  ).toBeCloseTo(-JOG_EXTRA_LENGTH, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

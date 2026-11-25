@@ -2,6 +2,7 @@ import { expect, test } from "bun:test"
 import { cju } from "@tscircuit/circuit-json-util"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { createBasicAutorouter } from "tests/fixtures/create-basic-autorouter"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderCircuit } from "tests/fixtures/render-circuit"
 
@@ -135,7 +136,9 @@ test("a through pad that crosses its pad counts the crossing once, then its laye
   ).toMatchObject({ start: { x: -4.5, y: 0.4 }, end: { x: -3.5, y: 0.4 } })
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
   const boardThickness = db.pcb_board.list()[0].thickness
-  expect(pair.max_abs_phase_skew).toBeCloseTo(boardThickness, 5)
-  expect(pair.end_to_end_length_delta).toBeCloseTo(boardThickness, 5)
+  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(boardThickness, 5)
+  expect(
+    pair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBeCloseTo(boardThickness, 5)
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

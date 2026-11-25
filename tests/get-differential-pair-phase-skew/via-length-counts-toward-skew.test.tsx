@@ -3,7 +3,7 @@ import { cju } from "@tscircuit/circuit-json-util"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 test("each via adds the same length to skew as to trace_length", async () => {
   // Both traces take the same path, but DN hops to the bottom layer and
@@ -22,15 +22,18 @@ test("each via adds the same length to skew as to trace_length", async () => {
     .map((trace) => trace.trace_length ?? Number.NaN)
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
-  const before = segmentAtX({ segments: pair.positive_trace.segments, x: -9 })
-  const after = segmentAtX({ segments: pair.positive_trace.segments, x: 9 })
-  expect(before.phase_skew).toBe(0)
-  expect(after.phase_skew).toBeCloseTo(positiveLength - negativeLength, 5)
-  expect(after.phase_skew).toBeLessThan(0)
-  expect(pair.end_to_end_length_delta).toBeCloseTo(
-    positiveLength - negativeLength,
-    5,
+  expect(phaseSkewAtX({ segments: pair.positive_trace.segments, x: -9 })).toBe(
+    0,
   )
+  expect(
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 9 }),
+  ).toBeCloseTo(positiveLength - negativeLength, 5)
+  expect(
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 9 }),
+  ).toBeLessThan(0)
+  expect(
+    pair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBeCloseTo(positiveLength - negativeLength, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

@@ -1,9 +1,10 @@
 import { expect, test } from "bun:test"
-import type { PhaseSkewSegment } from "lib/index"
+import type { PcbDifferentialPairPhaseSkewSegment } from "circuit-json"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 /** The vertical overlay segment at `x` that covers `y`. */
 function segmentAtY({
@@ -11,10 +12,10 @@ function segmentAtY({
   x,
   y,
 }: {
-  segments: PhaseSkewSegment[]
+  segments: PcbDifferentialPairPhaseSkewSegment[]
   x: number
   y: number
-}): PhaseSkewSegment {
+}): PcbDifferentialPairPhaseSkewSegment {
   const segment = segments.find(
     (candidate) =>
       Math.abs(candidate.start.x - x) < 1e-9 &&
@@ -69,18 +70,20 @@ test("coupled serpentine meander alternates phase skew across legs and cancels t
   })
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
-  const entryPos = segmentAtX({
-    segments: pair.positive_trace.segments,
-    x: -8,
-    y: 0.3,
-  })
-  const entryNeg = segmentAtX({
-    segments: pair.negative_trace.segments,
-    x: -8,
-    y: -0.3,
-  })
-  expect(entryPos.phase_skew).toBe(0)
-  expect(entryNeg.phase_skew).toBe(0)
+  expect(
+    phaseSkewAtX({
+      segments: pair.positive_trace.segments,
+      x: -8,
+      y: 0.3,
+    }),
+  ).toBe(0)
+  expect(
+    phaseSkewAtX({
+      segments: pair.negative_trace.segments,
+      x: -8,
+      y: -0.3,
+    }),
+  ).toBe(0)
 
   const firstDownPos = segmentAtY({
     segments: pair.positive_trace.segments,
@@ -92,21 +95,23 @@ test("coupled serpentine meander alternates phase skew across legs and cancels t
     x: -4.0,
     y: -1,
   })
-  expect(firstDownPos.phase_skew).toBeCloseTo(BEND_SKEW, 5)
-  expect(firstDownNeg.phase_skew).toBeCloseTo(-BEND_SKEW, 5)
+  expect(firstDownPos.start_length_difference_mm).toBeCloseTo(BEND_SKEW, 5)
+  expect(firstDownNeg.start_length_difference_mm).toBeCloseTo(-BEND_SKEW, 5)
 
-  const bottomPos = segmentAtX({
-    segments: pair.positive_trace.segments,
-    x: -2.9,
-    y: -1.7,
-  })
-  const bottomNeg = segmentAtX({
-    segments: pair.negative_trace.segments,
-    x: -2.9,
-    y: -2.3,
-  })
-  expect(bottomPos.phase_skew).toBe(0)
-  expect(bottomNeg.phase_skew).toBe(0)
+  expect(
+    phaseSkewAtX({
+      segments: pair.positive_trace.segments,
+      x: -2.9,
+      y: -1.7,
+    }),
+  ).toBe(0)
+  expect(
+    phaseSkewAtX({
+      segments: pair.negative_trace.segments,
+      x: -2.9,
+      y: -2.3,
+    }),
+  ).toBe(0)
 
   const middleUpPos = segmentAtY({
     segments: pair.positive_trace.segments,
@@ -118,21 +123,23 @@ test("coupled serpentine meander alternates phase skew across legs and cancels t
     x: -1.8,
     y: 0,
   })
-  expect(middleUpPos.phase_skew).toBeCloseTo(-BEND_SKEW, 5)
-  expect(middleUpNeg.phase_skew).toBeCloseTo(BEND_SKEW, 5)
+  expect(middleUpPos.start_length_difference_mm).toBeCloseTo(-BEND_SKEW, 5)
+  expect(middleUpNeg.start_length_difference_mm).toBeCloseTo(BEND_SKEW, 5)
 
-  const topPos = segmentAtX({
-    segments: pair.positive_trace.segments,
-    x: -1.3,
-    y: 2.3,
-  })
-  const topNeg = segmentAtX({
-    segments: pair.negative_trace.segments,
-    x: -1.3,
-    y: 1.7,
-  })
-  expect(topPos.phase_skew).toBe(0)
-  expect(topNeg.phase_skew).toBe(0)
+  expect(
+    phaseSkewAtX({
+      segments: pair.positive_trace.segments,
+      x: -1.3,
+      y: 2.3,
+    }),
+  ).toBe(0)
+  expect(
+    phaseSkewAtX({
+      segments: pair.negative_trace.segments,
+      x: -1.3,
+      y: 1.7,
+    }),
+  ).toBe(0)
 
   const finalDownPos = segmentAtY({
     segments: pair.positive_trace.segments,
@@ -144,23 +151,25 @@ test("coupled serpentine meander alternates phase skew across legs and cancels t
     x: -0.8,
     y: 1,
   })
-  expect(finalDownPos.phase_skew).toBeCloseTo(BEND_SKEW, 5)
-  expect(finalDownNeg.phase_skew).toBeCloseTo(-BEND_SKEW, 5)
+  expect(finalDownPos.start_length_difference_mm).toBeCloseTo(BEND_SKEW, 5)
+  expect(finalDownNeg.start_length_difference_mm).toBeCloseTo(-BEND_SKEW, 5)
 
-  const exitPos = segmentAtX({
-    segments: pair.positive_trace.segments,
-    x: 6,
-    y: 0.3,
-  })
-  const exitNeg = segmentAtX({
-    segments: pair.negative_trace.segments,
-    x: 6,
-    y: -0.3,
-  })
-  expect(exitPos.phase_skew).toBe(0)
-  expect(exitNeg.phase_skew).toBe(0)
+  expect(
+    phaseSkewAtX({
+      segments: pair.positive_trace.segments,
+      x: 6,
+      y: 0.3,
+    }),
+  ).toBe(0)
+  expect(
+    phaseSkewAtX({
+      segments: pair.negative_trace.segments,
+      x: 6,
+      y: -0.3,
+    }),
+  ).toBe(0)
 
-  expect(pair.max_abs_phase_skew).toBeCloseTo(BEND_SKEW, 5)
+  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(BEND_SKEW, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

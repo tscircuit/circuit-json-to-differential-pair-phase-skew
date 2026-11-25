@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 
 test("a coupled stretch right at the 1 nm overlap threshold finishes without hanging", async () => {
@@ -21,12 +22,10 @@ test("a coupled stretch right at the 1 nm overlap threshold finishes without han
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
-  const known = pair.positive_trace.segments.filter(
-    (segment) => segment.phase_skew !== undefined,
-  )
+  const known = pair.positive_trace.segments
   expect(known).toHaveLength(1)
-  expect(known[0].phase_skew).toBeCloseTo(-6, 5)
-  expect(pair.max_abs_phase_skew).toBeCloseTo(6, 5)
+  expect(known[0].start_length_difference_mm).toBeCloseTo(-6, 5)
+  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(6, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 }, 2000)

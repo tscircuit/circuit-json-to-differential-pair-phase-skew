@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import type { PhaseSkewSegment } from "lib/index"
+import type { PcbDifferentialPairPhaseSkewSegment } from "circuit-json"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { createBasicAutorouter } from "tests/fixtures/create-basic-autorouter"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
@@ -19,9 +19,9 @@ function segmentCoveringX({
   segments,
   x,
 }: {
-  segments: PhaseSkewSegment[]
+  segments: PcbDifferentialPairPhaseSkewSegment[]
   x: number
-}): PhaseSkewSegment {
+}): PcbDifferentialPairPhaseSkewSegment {
   const segment = segments.find(
     (candidate) =>
       Math.min(candidate.start.x, candidate.end.x) <= x &&
@@ -147,7 +147,7 @@ test("tapers that cross the pad edges keep the copper's local width after clippi
   )
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  expect(pair.end_to_end_length_delta).toBe(0)
+  expect(pair.positive_trace.segments.at(-1)?.end_length_difference_mm).toBe(0)
   for (const x of [-7.95, -7.5, -7, 7, 7.5, 7.95]) {
     const segment = segmentCoveringX({
       segments: pair.positive_trace.segments,

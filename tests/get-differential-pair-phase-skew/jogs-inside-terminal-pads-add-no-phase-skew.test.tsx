@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderCircuit } from "tests/fixtures/render-circuit"
 
@@ -81,8 +82,8 @@ test("jogs inside the source and load pads add no phase skew, as KiCad clips rou
   )
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  expect(pair.end_to_end_length_delta).toBe(0)
-  expect(pair.max_abs_phase_skew).toBe(0)
+  expect(pair.positive_trace.segments.at(-1)?.end_length_difference_mm).toBe(0)
+  expect(maximumAbsolutePhaseSkew(pair)).toBe(0)
   // DP's copper inside each pad is measured straight from the pad edge, at
   // x = -7 and x = 7, to the pad centre, carrying on straight to x = -6 and
   // from x = 6.

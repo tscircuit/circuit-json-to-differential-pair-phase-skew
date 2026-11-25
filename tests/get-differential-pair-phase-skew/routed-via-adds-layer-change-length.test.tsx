@@ -2,6 +2,7 @@ import { expect, test } from "bun:test"
 import { cju } from "@tscircuit/circuit-json-util"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { createBasicAutorouter } from "tests/fixtures/create-basic-autorouter"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderCircuit } from "tests/fixtures/render-circuit"
 
@@ -109,8 +110,7 @@ test("a routed via adds its layer change length to phase skew, like a claimed vi
   // DP is ahead by the board thickness once both traces are on bottom, the
   // same as when it claims a via (claimed-through-pad-adds-layer-change-length).
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  expect(pair).toMatchObject({
-    max_abs_phase_skew: db.pcb_board.list()[0].thickness,
-  })
+  expect(pair).toMatchObject({})
+  expect(maximumAbsolutePhaseSkew(pair)).toBe(db.pcb_board.list()[0].thickness)
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

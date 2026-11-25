@@ -1,4 +1,3 @@
-import { roundPhaseSkew } from "./round-phase-skew"
 import { type CoupledRun, MIN_OVERLAP } from "./select-coupled-runs"
 import type { TraceStep } from "./walk-trace"
 
@@ -6,7 +5,7 @@ import type { TraceStep } from "./walk-trace"
  * A stretch of one trace, between two routed distances along its walk, with
  * phase skew changing linearly from `startPhaseSkewMm` to `endPhaseSkewMm`.
  */
-export type KnownPhaseSkewSpan = {
+export type PhaseSkewSpan = {
   startWalkDistanceMm: number
   endWalkDistanceMm: number
   startPhaseSkewMm: number
@@ -20,18 +19,6 @@ export type UnknownPhaseSkewSpan = {
   startPhaseSkewMm: null
   endPhaseSkewMm: null
 }
-
-/** A stretch of one trace with known or unknown phase skew. */
-export type PhaseSkewSpan = KnownPhaseSkewSpan | UnknownPhaseSkewSpan
-
-/**
- * The maximum and minimum phase skew on one trace, in mm, including zero,
- * evaluated at known span endpoints and adjacent via edges.
- */
-export type PhaseSkewRange = { maxPhaseSkewMm: number; minPhaseSkewMm: number }
-
-/** One trace's phase skew spans and their range. */
-export type PhaseSkewTrack = { spans: PhaseSkewSpan[]; range: PhaseSkewRange }
 
 /** Which trace of the pair a walk belongs to. */
 type PairSide = "positive" | "negative"
@@ -55,50 +42,23 @@ type SideRun = {
 }
 
 /**
- * Covers one whole trace with spans: unknown before the first coupled run
- * and after the last, coupled runs as measured, and interpolated between
- * consecutive runs. When a coupled run begins or ends right at a via, the
- * via length steps at the via instead of ramping across the uncoupled
- * stretch, and the via endpoint is included in the trace's range even
- * before the first run or after the last. Each trace reports its own routed
- * distance minus its partner's, as KiCad does, so the negative trace shows
- * negative minus positive.
+ * Returns the known phase skew spans on one trace: measured on coupled runs
+ * and interpolated between them. Via lengths step at the via, where there
+ * is no planar copper, instead of ramping across the uncoupled stretch.
  */
 export function getPhaseSkewTrack({
   runs,
   side,
   steps,
   partnerSteps,
-  length,
 }: {
   runs: CoupledRun[]
   side: PairSide
   steps: TraceStep[]
   partnerSteps: TraceStep[]
-  /** The trace's walk length, in mm. */
-  length: number
-}): PhaseSkewTrack {
+}): PhaseSkewSpan[] {
   const sideRuns = getSideRuns({ runs, side, steps, partnerSteps })
-  const [first] = sideRuns
-  const last = sideRuns.at(-1)
-  if (!first || !last) {
-    return {
-      spans: [
-        unknownSpan({ startWalkDistanceMm: 0, endWalkDistanceMm: length }),
-      ],
-      range: { maxPhaseSkewMm: 0, minPhaseSkewMm: 0 },
-    }
-  }
   const spans: PhaseSkewSpan[] = []
-  // Gaps under MIN_OVERLAP are rounding at shared corners, not stretches.
-  if (first.startWalkDistanceMm > MIN_OVERLAP) {
-    spans.push(
-      unknownSpan({
-        startWalkDistanceMm: 0,
-        endWalkDistanceMm: first.startWalkDistanceMm,
-      }),
-    )
-  }
   for (const [index, run] of sideRuns.entries()) {
     const previous = sideRuns[index - 1]
     if (previous !== undefined) {
@@ -112,21 +72,7 @@ export function getPhaseSkewTrack({
       endPhaseSkewMm: run.endPhaseSkewMm,
     })
   }
-  if (length - last.endWalkDistanceMm > MIN_OVERLAP) {
-    spans.push(
-      unknownSpan({
-        startWalkDistanceMm: last.endWalkDistanceMm,
-        endWalkDistanceMm: length,
-      }),
-    )
-  }
-  return {
-    spans,
-    range: getPhaseSkewRange({
-      spans,
-      outerViaEdgePhaseSkewsMm: getOuterViaEdgePhaseSkewsMm({ first, last }),
-    }),
-  }
+  return spans
 }
 
 /** The coupled runs seen from `side`, with layer change lengths at their ends, in order along that trace. */
@@ -218,7 +164,7 @@ function interpolateUnmatchedSpan({
 }: {
   previous: SideRun
   run: SideRun
-}): KnownPhaseSkewSpan | null {
+}): PhaseSkewSpan | null {
   const startWalkDistanceMm =
     previous.endWalkDistanceMm + previous.layerChangeLengthAfterMm
   const endWalkDistanceMm =
@@ -248,67 +194,6 @@ function interpolateUnmatchedSpan({
       run.layerChangeLengthBeforeMm +
       partnerLayerChangeLengthBeforeMm,
   }
-}
-
-/** Phase skew just across a via before the first coupled run or after the last, which the range includes. */
-function getOuterViaEdgePhaseSkewsMm({
-  first,
-  last,
-}: {
-  first: SideRun
-  last: SideRun
-}): number[] {
-  const outerViaEdgePhaseSkewsMm: number[] = []
-  if (
-    first.layerChangeLengthBeforeMm > 0 ||
-    first.partnerLayerChangeLengthBeforeMm > 0
-  ) {
-    outerViaEdgePhaseSkewsMm.push(
-      first.startPhaseSkewMm -
-        first.layerChangeLengthBeforeMm +
-        first.partnerLayerChangeLengthBeforeMm,
-    )
-  }
-  if (
-    last.layerChangeLengthAfterMm > 0 ||
-    last.partnerLayerChangeLengthAfterMm > 0
-  ) {
-    outerViaEdgePhaseSkewsMm.push(
-      last.endPhaseSkewMm +
-        last.layerChangeLengthAfterMm -
-        last.partnerLayerChangeLengthAfterMm,
-    )
-  }
-  return outerViaEdgePhaseSkewsMm
-}
-
-/**
- * The maximum and minimum rounded phase skew, including zero, evaluated at
- * every known span endpoint and at `outerViaEdgePhaseSkewsMm`.
- */
-function getPhaseSkewRange({
-  spans,
-  outerViaEdgePhaseSkewsMm,
-}: {
-  spans: PhaseSkewSpan[]
-  outerViaEdgePhaseSkewsMm: number[]
-}): PhaseSkewRange {
-  const phaseSkewsMm = [...outerViaEdgePhaseSkewsMm]
-  for (const span of spans) {
-    if (span.startPhaseSkewMm === null) continue
-    phaseSkewsMm.push(span.startPhaseSkewMm, span.endPhaseSkewMm)
-  }
-  const range: PhaseSkewRange = { maxPhaseSkewMm: 0, minPhaseSkewMm: 0 }
-  for (const phaseSkewMm of phaseSkewsMm) {
-    const roundedPhaseSkewMm = roundPhaseSkew(phaseSkewMm)
-    if (roundedPhaseSkewMm > range.maxPhaseSkewMm) {
-      range.maxPhaseSkewMm = roundedPhaseSkewMm
-    }
-    if (roundedPhaseSkewMm < range.minPhaseSkewMm) {
-      range.minPhaseSkewMm = roundedPhaseSkewMm
-    }
-  }
-  return range
 }
 
 /** Z-distance of any layer change directly before the start or after the end of a step at `walkDistanceMm`, in mm. */
@@ -369,20 +254,4 @@ function edgeLayerChangeLengthMm({
 }): number {
   if (edge === "start") return step.layerChangeLengthBeforeMm
   return step.layerChangeLengthAfterMm
-}
-
-/** A span with no phase skew information. */
-function unknownSpan({
-  startWalkDistanceMm,
-  endWalkDistanceMm,
-}: {
-  startWalkDistanceMm: number
-  endWalkDistanceMm: number
-}): UnknownPhaseSkewSpan {
-  return {
-    startWalkDistanceMm,
-    endWalkDistanceMm,
-    startPhaseSkewMm: null,
-    endPhaseSkewMm: null,
-  }
 }

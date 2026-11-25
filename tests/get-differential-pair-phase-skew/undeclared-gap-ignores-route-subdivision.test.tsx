@@ -3,6 +3,7 @@ import type { AnyCircuitElement } from "circuit-json"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { type PairPathPoint, renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 /**
  * DN runs 2 mm below DP between x = -11 and x = 11. Both routes get extra
@@ -39,10 +40,9 @@ test("without pcbTraceGap, splitting a route into more points doesn't change cou
     }),
   )
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  const middle = pair.positive_trace.segments.find(
-    (segment) => segment.start.x <= 0 && segment.end.x >= 0,
-  )
   // The 2.8 mm DN adds at its ends ramps in across the far stretch.
-  expect(middle?.phase_skew).toBeCloseTo(-1.4, 1)
+  expect(
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0 }),
+  ).toBeCloseTo(-1.4, 1)
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

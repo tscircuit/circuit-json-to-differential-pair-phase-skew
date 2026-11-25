@@ -100,10 +100,9 @@ test("a route that starts with a via leaving on its from_layer is walked across 
   })
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  expect(pair.end_to_end_length_delta).toBeCloseTo(
-    db.pcb_board.list()[0].thickness,
-    5,
-  )
+  expect(
+    pair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBeCloseTo(db.pcb_board.list()[0].thickness, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })
