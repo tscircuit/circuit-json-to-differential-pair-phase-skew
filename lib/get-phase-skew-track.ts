@@ -1,5 +1,9 @@
+import { roundPhaseSkew } from "./round-phase-skew"
 import { type CoupledRun, MIN_OVERLAP } from "./select-coupled-runs"
 import type { TraceStep } from "./walk-trace"
+
+/** Half of KiCad’s default 0.05 mm overlay sample interval. */
+const JOINT_BLEND_HALF_LENGTH_MM = 0.025
 
 /**
  * A stretch of one trace, between two routed distances along its walk, with
@@ -59,20 +63,94 @@ export function getPhaseSkewTrack({
 }): PhaseSkewSpan[] {
   const sideRuns = getSideRuns({ runs, side, steps, partnerSteps })
   const spans: PhaseSkewSpan[] = []
+  let previousBlend: PhaseSkewSpan | null = null
   for (const [index, run] of sideRuns.entries()) {
     const previous = sideRuns[index - 1]
+    const nextBlend = blendTouchingRuns({
+      previous: run,
+      next: sideRuns[index + 1],
+    })
     if (previous !== undefined) {
-      const unmatchedSpan = interpolateUnmatchedSpan({ previous, run })
-      if (unmatchedSpan !== null) spans.push(unmatchedSpan)
+      const between =
+        previousBlend ?? interpolateUnmatchedSpan({ previous, run })
+      if (
+        between &&
+        between.endWalkDistanceMm - between.startWalkDistanceMm > MIN_OVERLAP
+      ) {
+        spans.push(between)
+      }
     }
     spans.push({
-      startWalkDistanceMm: run.startWalkDistanceMm,
-      endWalkDistanceMm: run.endWalkDistanceMm,
-      startPhaseSkewMm: run.startPhaseSkewMm,
-      endPhaseSkewMm: run.endPhaseSkewMm,
+      startWalkDistanceMm:
+        previousBlend?.endWalkDistanceMm ?? run.startWalkDistanceMm,
+      endWalkDistanceMm:
+        nextBlend?.startWalkDistanceMm ?? run.endWalkDistanceMm,
+      startPhaseSkewMm: previousBlend?.endPhaseSkewMm ?? run.startPhaseSkewMm,
+      endPhaseSkewMm: nextBlend?.startPhaseSkewMm ?? run.endPhaseSkewMm,
     })
+    previousBlend = nextBlend
   }
   return spans
+}
+
+/**
+ * Replaces coincident copper anchors with a short interpolation from the
+ * previous partner distance to the next. Via lengths still step at the via.
+ */
+function blendTouchingRuns({
+  previous,
+  next,
+}: {
+  previous: SideRun
+  next: SideRun | undefined
+}): PhaseSkewSpan | null {
+  if (
+    !next ||
+    Math.abs(next.startWalkDistanceMm - previous.endWalkDistanceMm) >
+      MIN_OVERLAP ||
+    previous.layerChangeLengthAfterMm > 0 ||
+    next.layerChangeLengthBeforeMm > 0 ||
+    previous.partnerLayerChangeLengthAfterMm > 0 ||
+    next.partnerLayerChangeLengthBeforeMm > 0 ||
+    roundPhaseSkew(previous.endPhaseSkewMm) ===
+      roundPhaseSkew(next.startPhaseSkewMm)
+  ) {
+    return null
+  }
+
+  const previousLengthMm =
+    previous.endWalkDistanceMm - previous.startWalkDistanceMm
+  const nextLengthMm = next.endWalkDistanceMm - next.startWalkDistanceMm
+  // Keep the middle of each coupled run even if both its ends need blending.
+  const halfLengthMm = Math.min(
+    JOINT_BLEND_HALF_LENGTH_MM,
+    previousLengthMm / 4,
+    nextLengthMm / 4,
+  )
+  if (halfLengthMm <= MIN_OVERLAP) {
+    // With no room for an emitted ramp, share one partner distance at the joint.
+    const jointPhaseSkewMm =
+      (previous.endPhaseSkewMm + next.startPhaseSkewMm) / 2
+    return {
+      startWalkDistanceMm: previous.endWalkDistanceMm,
+      endWalkDistanceMm: next.startWalkDistanceMm,
+      startPhaseSkewMm: jointPhaseSkewMm,
+      endPhaseSkewMm: jointPhaseSkewMm,
+    }
+  }
+
+  return {
+    startWalkDistanceMm: previous.endWalkDistanceMm - halfLengthMm,
+    endWalkDistanceMm: next.startWalkDistanceMm + halfLengthMm,
+    startPhaseSkewMm:
+      previous.endPhaseSkewMm +
+      (previous.startPhaseSkewMm - previous.endPhaseSkewMm) *
+        (halfLengthMm / previousLengthMm),
+    endPhaseSkewMm:
+      next.startPhaseSkewMm +
+      (next.endPhaseSkewMm - next.startPhaseSkewMm) *
+        (halfLengthMm / nextLengthMm),
+  }
 }
 
 /** The coupled runs seen from `side`, with layer change lengths at their ends, in order along that trace. */
