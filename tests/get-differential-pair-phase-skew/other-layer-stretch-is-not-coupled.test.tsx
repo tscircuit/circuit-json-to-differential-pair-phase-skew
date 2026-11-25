@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 test("a stretch where the traces are on different layers is not coupled", async () => {
   // DN drops to the bottom layer between x = -6 and x = 6, with a 2 mm
@@ -21,13 +21,13 @@ test("a stretch where the traces are on different layers is not coupled", async 
   })
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
-  expect(
-    segmentAtX({ segments: pair.positive_trace.segments, x: -9 }).phase_skew,
-  ).toBe(0)
+  expect(phaseSkewAtX({ segments: pair.positive_trace.segments, x: -9 })).toBe(
+    0,
+  )
   // Measured, x = 0 would be the first via's 1.6 mm, before the detour.
   // Uncoupled, the skew ramps from -1.6 mm to -3.6 mm across DP's 12 mm.
   expect(
-    segmentAtX({ segments: pair.positive_trace.segments, x: 0 }).phase_skew,
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0 }),
   ).toBeCloseTo(-2.6, 2)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)

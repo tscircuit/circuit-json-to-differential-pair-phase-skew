@@ -3,34 +3,22 @@
   <g transform="scale(1 -1)">
     <line x1="-33" y1="0.3" x2="-9" y2="0.3" stroke="#8d6448" stroke-width="0.15"/>
     <line x1="9" y1="0.3" x2="33" y2="0.3" stroke="#8d6448" stroke-width="0.15"/>
-    <line x1="-33" y1="0.3" x2="-27" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-33" y1="0.3" x2="-27" y2="0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
-    <line x1="-27" y1="0.3" x2="-15" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-27" y1="0.3" x2="-15" y2="0.3" stroke-width="0.165" stroke="rgb(255, 0, 0)" stroke-opacity="0.5"/>
-    <line x1="-15" y1="0.3" x2="-9" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-15" y1="0.3" x2="-9" y2="0.3" stroke-width="0.165" stroke="rgb(255, 0, 0)" stroke-opacity="1"/>
-    <line x1="-33" y1="-0.3" x2="-27" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-33" y1="-0.3" x2="-27" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
-    <line x1="-27" y1="-0.3" x2="-14.999999999999996" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-27" y1="-0.3" x2="-14.999999999999996" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.5"/>
-    <line x1="-15" y1="-0.3" x2="-9" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="-15" y1="-0.3" x2="-9" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="1"/>
-    <line x1="9" y1="0.3" x2="15" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="9" y1="0.3" x2="15" y2="0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
-    <line x1="15" y1="0.3" x2="27" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="15" y1="0.3" x2="27" y2="0.3" stroke-width="0.165" stroke="rgb(255, 0, 0)" stroke-opacity="0.5"/>
-    <line x1="27" y1="0.3" x2="33" y2="0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="27" y1="0.3" x2="33" y2="0.3" stroke-width="0.165" stroke="rgb(255, 0, 0)" stroke-opacity="1"/>
-    <line x1="9" y1="-0.3" x2="15" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="9" y1="-0.3" x2="15" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0"/>
-    <line x1="15" y1="-0.3" x2="27" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="15" y1="-0.3" x2="27" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="0.5"/>
-    <line x1="27" y1="-0.3" x2="33" y2="-0.3" stroke-width="0.165" stroke="rgb(255, 255, 255)"/>
-    <line x1="27" y1="-0.3" x2="33" y2="-0.3" stroke-width="0.165" stroke="rgb(0, 0, 255)" stroke-opacity="1"/>
+    <line x1="-33" y1="0.3" x2="-27" y2="0.3" stroke-width="0.165" stroke="white"/>
+    <line x1="-27" y1="0.3" x2="-15" y2="0.3" stroke-width="0.165" stroke="rgb(255,128,128)"/>
+    <line x1="-15" y1="0.3" x2="-9" y2="0.3" stroke-width="0.165" stroke="rgb(255,0,0)"/>
+    <line x1="-33" y1="-0.3" x2="-27" y2="-0.3" stroke-width="0.165" stroke="white"/>
+    <line x1="-27" y1="-0.3" x2="-15" y2="-0.3" stroke-width="0.165" stroke="rgb(128,128,255)"/>
+    <line x1="-15" y1="-0.3" x2="-9" y2="-0.3" stroke-width="0.165" stroke="rgb(0,0,255)"/>
+    <line x1="9" y1="0.3" x2="15" y2="0.3" stroke-width="0.165" stroke="white"/>
+    <line x1="15" y1="0.3" x2="27" y2="0.3" stroke-width="0.165" stroke="rgb(255,128,128)"/>
+    <line x1="27" y1="0.3" x2="33" y2="0.3" stroke-width="0.165" stroke="rgb(255,0,0)"/>
+    <line x1="9" y1="-0.3" x2="15" y2="-0.3" stroke-width="0.165" stroke="white"/>
+    <line x1="15" y1="-0.3" x2="27" y2="-0.3" stroke-width="0.165" stroke="rgb(128,128,255)"/>
+    <line x1="27" y1="-0.3" x2="33" y2="-0.3" stroke-width="0.165" stroke="rgb(0,0,255)"/>
     <circle cx="-27" cy="-0.3" r="0.15" fill="none" stroke="#ead9bd" stroke-width="0.07"/>
     <circle cx="-15" cy="-0.3" r="0.15" fill="none" stroke="#ead9bd" stroke-width="0.07"/>
     <circle cx="15" cy="-0.3" r="0.15" fill="none" stroke="#ead9bd" stroke-width="0.07"/>
     <circle cx="27" cy="-0.3" r="0.15" fill="none" stroke="#ead9bd" stroke-width="0.07"/>
   </g>
-  <text x="-33.7" y="-0.8200000000000001" font-family="sans-serif" font-size="0.32" fill="#fff">Peak phase skew magnitude (mm): 2.98000, 1.60000. Blue: ahead. Red: behind. White: in step. Grey: unknown.</text>
+  <text x="-33.7" y="-0.8200000000000001" font-family="sans-serif" font-size="0.32" fill="#fff">Peak phase skew magnitude (mm): 2.98000, 1.60000. Blue: ahead. Red: behind. White: in step. Copper: unknown.</text>
 </svg>

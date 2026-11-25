@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 test("a nearer pass that doubles back doesn't displace the passes in route order", async () => {
   // DN runs 0.6 mm below DP from x = -12 to 0, dips 2 mm away until x = 1,
@@ -31,10 +31,13 @@ test("a nearer pass that doubles back doesn't displace the passes in route order
 
   // Both passes in route order are measured: in step before the dip, DN
   // 4 mm longer after it.
-  const first = segmentAtX({ segments: pair.positive_trace.segments, x: -6 })
-  const second = segmentAtX({ segments: pair.positive_trace.segments, x: 5 })
-  expect(first.phase_skew).toBe(0)
-  expect(second.phase_skew).toBeCloseTo(-4, 5)
+
+  expect(phaseSkewAtX({ segments: pair.positive_trace.segments, x: -6 })).toBe(
+    0,
+  )
+  expect(
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 5 }),
+  ).toBeCloseTo(-4, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

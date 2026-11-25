@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import { cju } from "@tscircuit/circuit-json-util"
 import { getDifferentialPairPhaseSkew } from "lib/index"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderSourcePadBoard } from "tests/fixtures/source-pad-board"
 
@@ -30,8 +31,8 @@ test("a jog inside the rectangular pad of a plated hole adds no phase skew", asy
   })
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  expect(pair.end_to_end_length_delta).toBe(0)
-  expect(pair.max_abs_phase_skew).toBe(0)
+  expect(pair.positive_trace.segments.at(-1)?.end_length_difference_mm).toBe(0)
+  expect(maximumAbsolutePhaseSkew(pair)).toBe(0)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

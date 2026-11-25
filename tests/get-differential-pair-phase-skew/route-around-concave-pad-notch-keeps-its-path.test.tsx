@@ -43,13 +43,15 @@ test("a route around a concave pad's notch keeps its path inside the pad", async
   })
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  const [firstPositiveSegment, secondPositiveSegment] =
-    pair.positive_trace.segments
-  expect(firstPositiveSegment.start).toEqual({ x: -9, y: 1 })
-  expect(firstPositiveSegment.end.x).toBeCloseTo(-9, 9)
+  // The entry leg is uncoupled. The first known segment follows the copper under the notch.
+  const [firstPositiveSegment] = pair.positive_trace.segments
+  expect(firstPositiveSegment.start.x).toBeCloseTo(-9, 9)
+  expect(firstPositiveSegment.start.y).toBeCloseTo(0.2, 9)
+  expect(firstPositiveSegment.end.x).toBeCloseTo(-7.5, 9)
   expect(firstPositiveSegment.end.y).toBeCloseTo(0.2, 9)
-  expect(secondPositiveSegment.end.x).toBeCloseTo(-7.5, 9)
-  expect(pair.end_to_end_length_delta).toBeCloseTo(ROUTE_EXTRA_LENGTH_MM, 5)
+  expect(
+    pair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBeCloseTo(ROUTE_EXTRA_LENGTH_MM, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

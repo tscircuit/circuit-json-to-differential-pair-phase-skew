@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { getDifferentialPairPhaseSkew } from "lib/index"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderSourcePadBoard } from "tests/fixtures/source-pad-board"
 
@@ -53,14 +54,15 @@ test("a route along a polygon pad's edge is clipped alike on either edge", async
   const [lowerPair] = getDifferentialPairPhaseSkew({
     circuitJson: lowerCircuitJson,
   })
-  expect(upperPair.end_to_end_length_delta).toBeCloseTo(
-    CLIPPED_EXTRA_LENGTH_MM,
-    5,
+  expect(
+    upperPair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBeCloseTo(CLIPPED_EXTRA_LENGTH_MM, 5)
+  expect(
+    lowerPair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBe(upperPair.positive_trace.segments.at(-1)?.end_length_difference_mm)
+  expect(maximumAbsolutePhaseSkew(lowerPair)).toBe(
+    maximumAbsolutePhaseSkew(upperPair),
   )
-  expect(lowerPair.end_to_end_length_delta).toBe(
-    upperPair.end_to_end_length_delta,
-  )
-  expect(lowerPair.max_abs_phase_skew).toBe(upperPair.max_abs_phase_skew)
 
   await expect(phaseSkewSvg(upperCircuitJson)).toMatchSvgSnapshot(
     import.meta.path,

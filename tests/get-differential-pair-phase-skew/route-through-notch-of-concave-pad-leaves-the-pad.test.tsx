@@ -2,6 +2,7 @@ import { expect, test } from "bun:test"
 import type { AnyCircuitElement } from "circuit-json"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import type { PairPathPoint } from "tests/fixtures/pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderSourcePadBoard } from "tests/fixtures/source-pad-board"
 
@@ -60,11 +61,15 @@ test("a route crossing the notch of a concave pad leaves the pad there, however 
   const [subdividedPair] = getDifferentialPairPhaseSkew({
     circuitJson: subdividedCircuitJson,
   })
-  expect(pair.end_to_end_length_delta).toBeCloseTo(ROUTE_EXTRA_LENGTH_MM, 5)
-  expect(subdividedPair.end_to_end_length_delta).toBe(
-    pair.end_to_end_length_delta,
+  expect(
+    pair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBeCloseTo(ROUTE_EXTRA_LENGTH_MM, 5)
+  expect(
+    subdividedPair.positive_trace.segments.at(-1)?.end_length_difference_mm,
+  ).toBe(pair.positive_trace.segments.at(-1)?.end_length_difference_mm)
+  expect(maximumAbsolutePhaseSkew(subdividedPair)).toBe(
+    maximumAbsolutePhaseSkew(pair),
   )
-  expect(subdividedPair.max_abs_phase_skew).toBe(pair.max_abs_phase_skew)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

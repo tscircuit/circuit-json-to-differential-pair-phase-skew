@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import { cju } from "@tscircuit/circuit-json-util"
 import { getDifferentialPairPhaseSkew } from "lib/index"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderCircuit } from "tests/fixtures/render-circuit"
 
@@ -152,8 +153,10 @@ test("a polygon plated pad without a drill size is clipped by its outline and ev
   ).toEqual(["POLYGON_PAIR", "PAIR"])
   // The jog stays inside the square pad, so it adds nothing.
   for (const pair of differentialPairPhaseSkews) {
-    expect(pair.end_to_end_length_delta).toBe(0)
-    expect(pair.max_abs_phase_skew).toBe(0)
+    expect(pair.positive_trace.segments.at(-1)?.end_length_difference_mm).toBe(
+      0,
+    )
+    expect(maximumAbsolutePhaseSkew(pair)).toBe(0)
   }
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)

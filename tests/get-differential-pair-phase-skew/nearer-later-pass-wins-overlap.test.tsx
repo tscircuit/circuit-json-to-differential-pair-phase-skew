@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 /** DN's length to x = 0 on its second, nearer pass: 0.5 + 0.6 + 13.5 out, 0.3 + 6 + 0.3 back, then 4. */
 const NEAR_PASS_LENGTH_AT_X0 = 0.5 + 0.6 + 13.5 + 0.3 + 6 + 0.3 + 4
@@ -27,7 +27,7 @@ test("where two passes overlap, the nearer one is used even when it comes later"
 
   // At x = 0 DP has run 12 mm.
   expect(
-    segmentAtX({ segments: pair.positive_trace.segments, x: 0 }).phase_skew,
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0 }),
   ).toBeCloseTo(12 - NEAR_PASS_LENGTH_AT_X0, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)

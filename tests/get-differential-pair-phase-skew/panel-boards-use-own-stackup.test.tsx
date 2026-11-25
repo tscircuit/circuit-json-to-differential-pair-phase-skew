@@ -7,6 +7,7 @@ import {
   type PairPathPoint,
   renderPairBoard,
 } from "tests/fixtures/pair-board"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderCircuit } from "tests/fixtures/render-circuit"
 
@@ -74,8 +75,11 @@ test("each board in a panel uses only its own stackup or thickness, never a neig
     const plainPair = pairs.find(
       (pair) => pair.source_bus_id === plainBus?.source_bus_id,
     )
-    expect(stackupPair?.max_abs_phase_skew).toBeCloseTo(2.98, 5)
-    expect(plainPair?.max_abs_phase_skew).toBeCloseTo(1.6, 5)
+    expect(stackupPair && maximumAbsolutePhaseSkew(stackupPair)).toBeCloseTo(
+      2.98,
+      5,
+    )
+    expect(plainPair && maximumAbsolutePhaseSkew(plainPair)).toBeCloseTo(1.6, 5)
   }
 
   const nestedPairJson = await renderPairBoard({
@@ -86,8 +90,10 @@ test("each board in a panel uses only its own stackup or thickness, never a neig
     thickness: "0.8mm",
   })
   expect(
-    getDifferentialPairPhaseSkew({ circuitJson: nestedPairJson })[0]
-      ?.max_abs_phase_skew,
+    getDifferentialPairPhaseSkew({ circuitJson: nestedPairJson })[0] &&
+      maximumAbsolutePhaseSkew(
+        getDifferentialPairPhaseSkew({ circuitJson: nestedPairJson })[0],
+      ),
   ).toBeCloseTo(1.6, 5)
 
   await expect(phaseSkewSvg(stackupFirstJson)).toMatchSvgSnapshot(

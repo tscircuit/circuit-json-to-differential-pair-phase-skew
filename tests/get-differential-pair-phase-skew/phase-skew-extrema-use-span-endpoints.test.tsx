@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
+import { phaseSkewEndpoints } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 
 /** DN's slanted 20 mm run is ~0.00196 mm longer than DP's straight run. */
@@ -20,22 +21,16 @@ test("each trace's phase skew extrema come from known span endpoints, not piece 
   })
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  const slanted = pair.negative_trace.segments.filter(
-    (segment) =>
-      segment.phase_skew !== undefined && segment.start.y !== segment.end.y,
+  expect(Math.max(0, ...phaseSkewEndpoints(pair.negative_trace))).toBeCloseTo(
+    SLANT_EXTRA_LENGTH,
+    5,
   )
-  // Every piece's midpoint is short of the run's end.
-  for (const segment of slanted) {
-    expect(segment.phase_skew ?? 0).toBeLessThanOrEqual(
-      pair.negative_trace.max_phase_skew,
-    )
-  }
-
-  // Scale comes from the 0.00196 mm span endpoint.
-  expect(pair.negative_trace.max_phase_skew).toBeCloseTo(SLANT_EXTRA_LENGTH, 5)
-  expect(pair.negative_trace.min_phase_skew).toBe(0)
-  expect(pair.positive_trace.max_phase_skew).toBe(0)
-  expect(pair.positive_trace.min_phase_skew).toBeCloseTo(-SLANT_EXTRA_LENGTH, 5)
+  expect(Math.min(0, ...phaseSkewEndpoints(pair.negative_trace))).toBe(0)
+  expect(Math.max(0, ...phaseSkewEndpoints(pair.positive_trace))).toBe(0)
+  expect(Math.min(0, ...phaseSkewEndpoints(pair.positive_trace))).toBeCloseTo(
+    -SLANT_EXTRA_LENGTH,
+    5,
+  )
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

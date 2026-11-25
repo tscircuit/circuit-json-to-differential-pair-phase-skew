@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 /** Extra length the negative trace runs while doubling back, in mm. */
 const DOUBLE_BACK_LENGTH = 0.3 + 6 + 0.3 + 6
@@ -25,20 +25,16 @@ test("when the negative trace passes the positive one twice, the nearer pass is 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
   const segments = pair.positive_trace.segments
-  expect(segmentAtX({ segments, x: 0 }).phase_skew).toBe(0)
-  expect(segmentAtX({ segments, x: 8 }).phase_skew).toBeCloseTo(
-    -DOUBLE_BACK_LENGTH,
-    5,
-  )
+  expect(phaseSkewAtX({ segments, x: 0 })).toBe(0)
+  expect(phaseSkewAtX({ segments, x: 8 })).toBeCloseTo(-DOUBLE_BACK_LENGTH, 5)
   // Where both passes are within the gap, DP is still matched only once.
   const coveringX0 = segments.filter(
     (segment) => segment.start.x <= 0 && segment.end.x >= 0,
   )
   expect(coveringX0).toHaveLength(1)
   for (const segment of segments) {
-    if (segment.phase_skew === undefined) continue
-    expect(segment.phase_skew).toBeLessThanOrEqual(0)
-    expect(segment.phase_skew).toBeGreaterThanOrEqual(
+    expect(segment.start_length_difference_mm).toBeLessThanOrEqual(0)
+    expect(segment.start_length_difference_mm).toBeGreaterThanOrEqual(
       -DOUBLE_BACK_LENGTH - 1e-5,
     )
   }

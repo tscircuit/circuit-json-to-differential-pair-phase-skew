@@ -3,7 +3,7 @@ import { getDifferentialPairPhaseSkew } from "lib/index"
 import { DETOUR_EXTRA_LENGTH } from "tests/fixtures/differential-pair-board"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX, segmentAtX } from "tests/fixtures/segment-at-x"
 
 test("a negative trace routed from its load across two vias keeps its layers and distances", async () => {
   // Both traces hop to the bottom layer between x = -6 and x = 6. DP also
@@ -28,13 +28,17 @@ test("a negative trace routed from its load across two vias keeps its layers and
   for (const x of [-3, 3]) {
     const positive = segmentAtX({ segments: pair.positive_trace.segments, x })
     const negative = segmentAtX({ segments: pair.negative_trace.segments, x })
-    expect(positive.layer).toBe("bottom")
-    expect(negative.layer).toBe("bottom")
-    expect(positive.phase_skew).toBeCloseTo(DETOUR_EXTRA_LENGTH, 5)
-    expect(negative.phase_skew).toBeCloseTo(-DETOUR_EXTRA_LENGTH, 5)
+    expect(positive?.layer).toBe("bottom")
+    expect(negative?.layer).toBe("bottom")
+    expect(
+      phaseSkewAtX({ segments: pair.positive_trace.segments, x }),
+    ).toBeCloseTo(DETOUR_EXTRA_LENGTH, 5)
+    expect(
+      phaseSkewAtX({ segments: pair.negative_trace.segments, x }),
+    ).toBeCloseTo(-DETOUR_EXTRA_LENGTH, 5)
   }
   expect(
-    segmentAtX({ segments: pair.negative_trace.segments, x: 9 }).layer,
+    segmentAtX({ segments: pair.negative_trace.segments, x: 9 })?.layer,
   ).toBe("top")
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)

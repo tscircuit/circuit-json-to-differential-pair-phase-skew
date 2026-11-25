@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { getDifferentialPairPhaseSkew } from "lib/index"
 import { renderPairBoard } from "tests/fixtures/pair-board"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
-import { segmentAtX } from "tests/fixtures/segment-at-x"
+import { phaseSkewAtX } from "tests/fixtures/segment-at-x"
 
 test("pad fan-outs include trace width in their coupling limit", async () => {
   // The parallel flare is 3.7 mm apart. The 3 mm pad pitch and 0.15 mm
@@ -26,8 +26,10 @@ test("pad fan-outs include trace width in their coupling limit", async () => {
   })
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  const flare = segmentAtX({ segments: pair.positive_trace.segments, x: -10 })
-  expect(flare.phase_skew).toBeCloseTo(-0.22066, 5)
+
+  expect(
+    phaseSkewAtX({ segments: pair.positive_trace.segments, x: -10 }),
+  ).toBeCloseTo(-0.22066, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

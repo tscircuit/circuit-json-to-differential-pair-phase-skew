@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import { cju } from "@tscircuit/circuit-json-util"
 import { getDifferentialPairPhaseSkew } from "lib/index"
+import { maximumAbsolutePhaseSkew } from "tests/fixtures/phase-skew-endpoints"
 import { phaseSkewSvg } from "tests/fixtures/phase-skew-svg"
 import { renderCircuit } from "tests/fixtures/render-circuit"
 
@@ -126,7 +127,7 @@ test("a pair with a via-only trace is skipped and the other pair is still measur
   expect(differentialPairPhaseSkews).toHaveLength(1)
   const [pair] = differentialPairPhaseSkews
   expect(cju(circuitJson).source_bus.get(pair.source_bus_id)?.name).toBe("PAIR")
-  expect(pair.max_abs_phase_skew).toBe(0)
+  expect(maximumAbsolutePhaseSkew(pair)).toBe(0)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

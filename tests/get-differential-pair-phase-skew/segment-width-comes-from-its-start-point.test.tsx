@@ -82,7 +82,6 @@ test("each phase skew segment takes the width of its start route point, like the
   )
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
   expect(pair).toMatchObject({
-    max_abs_phase_skew: 0,
     positive_trace: { segments: [{ width: 0.15 }, { width: 0.8 }] },
     negative_trace: { segments: [{ width: 0.15 }, { width: 0.8 }] },
   })
