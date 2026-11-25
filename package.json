@@ -28,7 +28,7 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "circuit-json": ">=0.0.561"
+    "circuit-json": ">=0.0.562"
   },
   "dependencies": {
     "@tscircuit/circuit-json-util": "0.0.135"
