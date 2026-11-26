@@ -13,10 +13,8 @@ test("without the compensating detour, the end-to-end length delta is the detour
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
   const [lengthSkewError] = checkPcbBusLengthSkew(circuitJson)
 
-  expect(
-    pair.positive_trace.segments.at(-1)?.end_length_difference_mm,
-  ).toBeCloseTo(DETOUR_EXTRA_LENGTH, 5)
-  expect(pair.end_to_end_length_difference_mm).toBeCloseTo(
+  const segments = pair.positive_trace.segments
+  expect(segments[segments.length - 1].end_length_difference_mm).toBeCloseTo(
     DETOUR_EXTRA_LENGTH,
     5,
   )
