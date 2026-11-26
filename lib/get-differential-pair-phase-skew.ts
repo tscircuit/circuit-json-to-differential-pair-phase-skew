@@ -19,6 +19,7 @@ import { getPhaseSkewSegments } from "./get-phase-skew-segments"
 import type { LayerChangeBoard } from "./get-layer-change-length"
 import { getPhaseSkewTrack } from "./get-phase-skew-track"
 import { haveOppositeTraceWalkDirections } from "./have-opposite-trace-walk-directions"
+import { roundPhaseSkew } from "./round-phase-skew"
 import { reverseWalk, type TraceWalk, walkTrace } from "./walk-trace"
 
 /** Board thickness in mm assumed for a pair that is routed without a board. */
@@ -37,8 +38,8 @@ const BOARD_DIMENSIONS_SCHEMA = pcb_board.pick({
 type PairWalks = { positive: TraceWalk; negative: TraceWalk }
 
 /**
- * Computes phase skew along every routed differential pair: at each point,
- * how much farther one trace has run than the other, not only at the ends.
+ * Computes phase skew along each measured differential pair and the signed
+ * end-to-end length difference, positive trace minus negative trace.
  *
  * Each result is a Circuit JSON element with segments where phase skew is
  * known. A pair is measured when its traces run side by side and each side
@@ -156,6 +157,9 @@ function getPairPhaseSkew({
     type: "pcb_differential_pair_phase_skew",
     pcb_differential_pair_phase_skew_id: `pcb_differential_pair_phase_skew_${bus.source_bus_id}`,
     source_bus_id: bus.source_bus_id,
+    end_to_end_length_difference_mm: roundPhaseSkew(
+      positive.length - negative.length,
+    ),
     positive_trace: {
       pcb_trace_id: positiveTrace.pcb_trace_id,
       segments: positiveSegments,

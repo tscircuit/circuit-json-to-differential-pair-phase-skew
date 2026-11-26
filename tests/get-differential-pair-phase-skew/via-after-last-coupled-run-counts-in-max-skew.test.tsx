@@ -28,6 +28,8 @@ test("a via after the last coupled run leaves the later copper unknown", async (
   expect(
     phaseSkewAtX({ segments: pair.positive_trace.segments, x: 0 }),
   ).toBeUndefined()
+  // The full walk includes both 1.6 mm vias and both 2 mm fanout jogs.
+  expect(pair.end_to_end_length_difference_mm).toBe(-7.2)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 })

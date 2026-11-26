@@ -25,7 +25,12 @@ import { getDifferentialPairPhaseSkew } from "compute-differential-pair-phase-sk
 const phaseSkews = getDifferentialPairPhaseSkew({ circuitJson })
 ```
 
-Each element references its source bus and both PCB traces. Each segment
+Each element references its source bus and both PCB traces.
+`end_to_end_length_difference_mm` is the full routed length of the positive
+trace minus that of the negative trace, including copper outside coupled
+runs and layer changes. It uses the same pad clipping as the segments.
+
+Each segment
 records its copper layer, width, endpoints, and the signed length difference
 at each endpoint. The difference varies linearly along the segment and is
 this trace's routed length so far minus its partner's. Segments split at

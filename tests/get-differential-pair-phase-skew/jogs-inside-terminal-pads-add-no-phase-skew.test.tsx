@@ -82,6 +82,7 @@ test("jogs inside the source and load pads add no phase skew, as KiCad clips rou
   )
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
+  expect(pair.end_to_end_length_difference_mm).toBe(0)
   expect(pair.positive_trace.segments.at(-1)?.end_length_difference_mm).toBe(0)
   expect(maximumAbsolutePhaseSkew(pair)).toBe(0)
   // DP's copper inside each pad is measured straight from the pad edge, at
