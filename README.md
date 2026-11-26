@@ -33,8 +33,11 @@ runs and layer changes. It uses the same pad clipping as the segments.
 Each segment
 records its copper layer, width, endpoints, and the signed length difference
 at each endpoint. The difference varies linearly along the segment and is
-this trace's routed length so far minus its partner's. Segments split at
-zero. Copper where the difference is unknown has no segment.
+this trace's routed length so far minus its partner's. The phase skew is
+interpolated from zero at the starting pad to the first coupled run, between
+coupled runs, and from the last coupled run to the signed total at the ending
+pad. The negative trace's final value is the negative of
+`end_to_end_length_difference_mm`. Segments split at zero.
 
 A pair is skipped if its traces never run side by side or a polarity spans
 multiple `pcb_trace` records. The library also skips pairs with missing planar

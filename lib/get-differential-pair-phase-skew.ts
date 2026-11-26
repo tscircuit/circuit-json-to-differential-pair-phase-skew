@@ -41,8 +41,8 @@ type PairWalks = { positive: TraceWalk; negative: TraceWalk }
  * Computes phase skew along each measured differential pair and the signed
  * end-to-end length difference, positive trace minus negative trace.
  *
- * Each result is a Circuit JSON element with segments where phase skew is
- * known. A pair is measured when its traces run side by side and each side
+ * Each result is a Circuit JSON element with phase skew segments from pad
+ * to pad. A pair is measured when its traces run side by side and each side
  * is routed as exactly one `pcb_trace`;
  * a side routed as several doesn't record their order along the signal.
  *
@@ -137,8 +137,8 @@ function getPairPhaseSkew({
     spans: getPhaseSkewTrack({
       runs,
       side: "positive",
-      steps: positive.steps,
-      partnerSteps: negative.steps,
+      walk: positive,
+      partnerWalk: negative,
     }),
   })
   const negativeSegments = getPhaseSkewSegments({
@@ -146,8 +146,8 @@ function getPairPhaseSkew({
     spans: getPhaseSkewTrack({
       runs,
       side: "negative",
-      steps: negative.steps,
-      partnerSteps: positive.steps,
+      walk: negative,
+      partnerWalk: positive,
     }),
   })
   if (positiveSegments.length === 0 || negativeSegments.length === 0) {

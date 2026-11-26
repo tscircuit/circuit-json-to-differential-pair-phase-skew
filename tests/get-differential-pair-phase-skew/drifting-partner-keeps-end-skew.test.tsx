@@ -19,11 +19,13 @@ test("a slightly slanted partner keeps the skew it builds along the run", async 
   })
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
-  // The run's skew grows from 0 to the slant's extra length; the maximum
-  // comes from its end, not its middle.
-  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(SLANT_EXTRA_LENGTH, 5)
+  // The total includes the slant and the final 2 mm jog back to the pad.
+  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(
+    SLANT_EXTRA_LENGTH + Math.hypot(2, 0.1) - 2,
+    5,
+  )
   const slanted = pair.negative_trace.segments.filter(
-    (segment) => segment.start.y !== segment.end.y,
+    (segment) => segment.start.y !== segment.end.y && segment.end.x <= 10,
   )
   expect(slanted).toHaveLength(1)
   expect(slanted[0].start_length_difference_mm).toBe(0)

@@ -15,12 +15,13 @@
     <line x1="-6.7" y1="1.8" x2="-5" y2="1" stroke="rgb(128,128,128)" stroke-width="0.165"/>
     <line x1="-5" y1="1" x2="9" y2="1" stroke="rgb(128,128,128)" stroke-width="0.165"/>
     <line x1="-9" y1="-1" x2="9" y2="-1" stroke="rgb(128,128,128)" stroke-width="0.165"/>
+    <linearGradient id="phase-skew-0-0" gradientUnits="userSpaceOnUse" x1="-9" y1="1" x2="-9" y2="0.19999999999999996"><stop offset="0" stop-color="white"/><stop offset="1" stop-color="rgb(176,176,255)"/></linearGradient><line x1="-9" y1="1" x2="-9" y2="0.19999999999999996" stroke-width="0.165" stroke="url(#phase-skew-0-0)"/>
     <line x1="-9" y1="0.19999999999999996" x2="-7.5" y2="0.19999999999999996" stroke-width="0.165" stroke="rgb(176,176,255)"/>
-    <linearGradient id="phase-skew-0-1" gradientUnits="userSpaceOnUse" x1="-7.5" y1="0.19999999999999996" x2="-7.5" y2="1.8"><stop offset="0" stop-color="rgb(176,176,255)"/><stop offset="1" stop-color="rgb(110,110,255)"/></linearGradient><line x1="-7.5" y1="0.19999999999999996" x2="-7.5" y2="1.8" stroke-width="0.165" stroke="url(#phase-skew-0-1)"/>
-    <linearGradient id="phase-skew-0-2" gradientUnits="userSpaceOnUse" x1="-7.5" y1="1.8" x2="-6.7" y2="1.8"><stop offset="0" stop-color="rgb(110,110,255)"/><stop offset="1" stop-color="rgb(77,77,255)"/></linearGradient><line x1="-7.5" y1="1.8" x2="-6.7" y2="1.8" stroke-width="0.165" stroke="url(#phase-skew-0-2)"/>
-    <linearGradient id="phase-skew-0-3" gradientUnits="userSpaceOnUse" x1="-6.7" y1="1.8" x2="-5" y2="1"><stop offset="0" stop-color="rgb(77,77,255)"/><stop offset="1" stop-color="rgb(0,0,255)"/></linearGradient><line x1="-6.7" y1="1.8" x2="-5" y2="1" stroke-width="0.165" stroke="url(#phase-skew-0-3)"/>
+    <linearGradient id="phase-skew-0-2" gradientUnits="userSpaceOnUse" x1="-7.5" y1="0.19999999999999996" x2="-7.5" y2="1.8"><stop offset="0" stop-color="rgb(176,176,255)"/><stop offset="1" stop-color="rgb(110,110,255)"/></linearGradient><line x1="-7.5" y1="0.19999999999999996" x2="-7.5" y2="1.8" stroke-width="0.165" stroke="url(#phase-skew-0-2)"/>
+    <linearGradient id="phase-skew-0-3" gradientUnits="userSpaceOnUse" x1="-7.5" y1="1.8" x2="-6.7" y2="1.8"><stop offset="0" stop-color="rgb(110,110,255)"/><stop offset="1" stop-color="rgb(77,77,255)"/></linearGradient><line x1="-7.5" y1="1.8" x2="-6.7" y2="1.8" stroke-width="0.165" stroke="url(#phase-skew-0-3)"/>
+    <linearGradient id="phase-skew-0-4" gradientUnits="userSpaceOnUse" x1="-6.7" y1="1.8" x2="-5" y2="1"><stop offset="0" stop-color="rgb(77,77,255)"/><stop offset="1" stop-color="rgb(0,0,255)"/></linearGradient><line x1="-6.7" y1="1.8" x2="-5" y2="1" stroke-width="0.165" stroke="url(#phase-skew-0-4)"/>
     <line x1="-5" y1="1" x2="9" y2="1" stroke-width="0.165" stroke="rgb(0,0,255)"/>
-    <line x1="-9" y1="-1" x2="-7.5" y2="-1" stroke-width="0.165" stroke="rgb(255,176,176)"/>
+    <linearGradient id="phase-skew-1-0" gradientUnits="userSpaceOnUse" x1="-9" y1="-1" x2="-7.5" y2="-1"><stop offset="0" stop-color="white"/><stop offset="1" stop-color="rgb(255,176,176)"/></linearGradient><line x1="-9" y1="-1" x2="-7.5" y2="-1" stroke-width="0.165" stroke="url(#phase-skew-1-0)"/>
     <linearGradient id="phase-skew-1-1" gradientUnits="userSpaceOnUse" x1="-7.5" y1="-1" x2="-5" y2="-1"><stop offset="0" stop-color="rgb(255,176,176)"/><stop offset="1" stop-color="rgb(255,0,0)"/></linearGradient><line x1="-7.5" y1="-1" x2="-5" y2="-1" stroke-width="0.165" stroke="url(#phase-skew-1-1)"/>
     <line x1="-5" y1="-1" x2="9" y2="-1" stroke-width="0.165" stroke="rgb(255,0,0)"/>
   </g>
