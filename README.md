@@ -36,14 +36,6 @@ ends at the end-to-end difference), while a pad level with the middle of its
 partner's fanout starts behind by the partner's length so far. Segments split
 at zero.
 
-For consumers that want stored values along the route, opt in with
-`getDifferentialPairPhaseSkew({ circuitJson, sample_spacing_mm: 0.1 })`.
-This subdivides each measured planar segment into pieces no longer than 0.1 mm
-in this example. Each new endpoint stores the interpolated signed difference.
-Existing endpoints, layers, widths and unmeasured gaps are preserved. Omit
-the option for the compact, unchanged output. The option must be finite and
-positive and may not add more than 100,000 samples per call.
-
 For bus length limits, use `checkPcbBusLengthSkew` from `@tscircuit/checks` with
 `source_bus.max_length_skew`.
 
