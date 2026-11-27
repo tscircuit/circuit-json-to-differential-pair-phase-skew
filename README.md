@@ -29,9 +29,12 @@ Each element references its source bus and both PCB traces.
 Each segment records its copper layer, width, endpoints, and the signed length
 difference at each endpoint. The difference varies linearly along the segment
 and is this trace's routed length so far minus its partner's. The phase skew is
-interpolated from zero at the starting pad to the first coupled run, between
-coupled runs, and from the last coupled run to the running difference at the
-ending pad. Segments split at zero.
+interpolated from each pad to the nearest coupled run and between coupled
+runs. At a pad, the difference is measured across the pair, perpendicular to
+the nearest coupled run: a pad level with its partner's pad starts at zero (or
+ends at the end-to-end difference), while a pad level with the middle of its
+partner's fanout starts behind by the partner's length so far. Segments split
+at zero.
 
 For bus length limits, use `checkPcbBusLengthSkew` from `@tscircuit/checks` with
 `source_bus.max_length_skew`.
