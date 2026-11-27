@@ -18,6 +18,7 @@ import { findCoupledRuns } from "./find-coupled-runs"
 import { getPhaseSkewSegments } from "./get-phase-skew-segments"
 import type { LayerChangeBoard } from "./get-layer-change-length"
 import { getPhaseSkewTrack } from "./get-phase-skew-track"
+import { samplePhaseSkewPairs } from "./sample-phase-skew-pairs"
 import { haveOppositeTraceWalkDirections } from "./have-opposite-trace-walk-directions"
 import { reverseWalk, type TraceWalk, walkTrace } from "./walk-trace"
 
@@ -59,9 +60,18 @@ type PairWalks = { positive: TraceWalk; negative: TraceWalk }
  */
 export function getDifferentialPairPhaseSkew({
   circuitJson,
+  sample_spacing_mm,
 }: {
   circuitJson: AnyCircuitElement[]
+  /** Maximum distance between stored planar samples, in mm. Omit to keep the original segments. */
+  sample_spacing_mm?: number
 }): PcbDifferentialPairPhaseSkew[] {
+  if (
+    sample_spacing_mm !== undefined &&
+    (!Number.isFinite(sample_spacing_mm) || sample_spacing_mm <= 0)
+  ) {
+    throw new RangeError("sample_spacing_mm must be finite and greater than 0")
+  }
   const db = cju(circuitJson)
   const boardOwnerMap = createBoardOwnerMap(circuitJson)
   const pairs: PcbDifferentialPairPhaseSkew[] = []
@@ -105,7 +115,8 @@ export function getDifferentialPairPhaseSkew({
     })
     if (pair !== null) pairs.push(pair)
   }
-  return pairs
+  if (sample_spacing_mm === undefined) return pairs
+  return samplePhaseSkewPairs({ pairs, spacingMm: sample_spacing_mm })
 }
 
 /** Phase skew for one differential pair routed as one pcb_trace per side. */
