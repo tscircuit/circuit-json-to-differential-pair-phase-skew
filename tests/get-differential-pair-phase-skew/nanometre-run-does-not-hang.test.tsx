@@ -22,10 +22,10 @@ test("a coupled stretch right at the 1 nm overlap threshold finishes without han
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
 
-  const known = pair.positive_trace.segments
-  expect(known).toHaveLength(1)
-  expect(known[0].start_length_difference_mm).toBeCloseTo(-6, 5)
-  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(6, 5)
+  const segments = pair.positive_trace.segments
+  expect(segments).toHaveLength(3)
+  expect(segments[1].start_length_difference_mm).toBeCloseTo(-6, 5)
+  expect(maximumAbsolutePhaseSkew(pair)).toBeCloseTo(12, 5)
 
   await expect(phaseSkewSvg(circuitJson)).toMatchSvgSnapshot(import.meta.path)
 }, 2000)

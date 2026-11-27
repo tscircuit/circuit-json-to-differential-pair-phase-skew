@@ -33,6 +33,8 @@ export type PairBoardProps = {
   sourcePadHalfPitch?: number
   /** Half the centre-to-centre distance between the load pads, in mm. Defaults to 0.3. */
   loadPadHalfPitch?: number
+  /** X of the negative source pad, in mm. Defaults to -12, level with the positive source pad. */
+  negativeSourcePadX?: number
   /** Differential pair name. Defaults to "PAIR". */
   pairName?: string
   /** Optional subcircuit group containing the pair. */
@@ -56,6 +58,7 @@ export function PairBoard({
   fabricatorPreset,
   sourcePadHalfPitch = 0.3,
   loadPadHalfPitch = 0.3,
+  negativeSourcePadX = -12,
   pairName = "PAIR",
   subcircuitName,
 }: PairBoardProps): ReactElement {
@@ -82,7 +85,7 @@ export function PairBoard({
         footprintVariant="pad"
         padDiameter="0.3mm"
         doNotPlace
-        pcbX={-12}
+        pcbX={negativeSourcePadX}
         pcbY={-sourcePadHalfPitch}
       />
       <testpoint

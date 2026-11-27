@@ -43,8 +43,10 @@ test("a route around a concave pad's notch keeps its path inside the pad", async
   })
 
   const [pair] = getDifferentialPairPhaseSkew({ circuitJson })
-  // The entry leg is uncoupled. The first known segment follows the copper under the notch.
-  const [firstPositiveSegment] = pair.positive_trace.segments
+  // The first leg in the fanout travels down to the horizontal leg under the notch.
+  const [entry, firstPositiveSegment] = pair.positive_trace.segments
+  expect(entry.start.y).toBeCloseTo(1, 9)
+  expect(entry.start_length_difference_mm).toBe(0)
   expect(firstPositiveSegment.start.x).toBeCloseTo(-9, 9)
   expect(firstPositiveSegment.start.y).toBeCloseTo(0.2, 9)
   expect(firstPositiveSegment.end.x).toBeCloseTo(-7.5, 9)

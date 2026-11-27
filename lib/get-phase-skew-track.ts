@@ -1,6 +1,7 @@
 import { blendTouchingRuns } from "./blend-touching-runs"
+import { getPadAnchor } from "./get-pad-anchor"
 import { type CoupledRun, MIN_OVERLAP } from "./select-coupled-runs"
-import type { TraceStep } from "./walk-trace"
+import type { TraceStep, TraceWalk } from "./walk-trace"
 
 /**
  * A stretch of one trace, between two routed distances along its walk, with
@@ -43,50 +44,124 @@ export type SideRun = {
 }
 
 /**
- * Returns the known phase skew spans on one trace: measured on coupled runs
- * and interpolated between them. Via lengths step at the via, where there
- * is no planar copper, instead of ramping across the uncoupled stretch.
+ * Returns the phase skew spans from pad to pad: measured on coupled runs
+ * and interpolated across the intervening copper and terminal fanouts.
  */
 export function getPhaseSkewTrack({
   runs,
   side,
-  steps,
-  partnerSteps,
+  walk,
+  partnerWalk,
 }: {
   runs: CoupledRun[]
   side: PairSide
-  steps: TraceStep[]
-  partnerSteps: TraceStep[]
+  walk: TraceWalk
+  partnerWalk: TraceWalk
 }): PhaseSkewSpan[] {
-  const sideRuns = getSideRuns({ runs, side, steps, partnerSteps })
-  const spans: PhaseSkewSpan[] = []
+  const steps = walk.steps
+  const sideRuns = getSideRuns({
+    runs,
+    side,
+    steps,
+    partnerSteps: partnerWalk.steps,
+  })
+  const first = sideRuns[0]
+  const last = sideRuns.at(-1)
+  if (first === undefined || last === undefined) return []
+
+  const start = getPadAnchor({
+    walk,
+    partnerWalk,
+    run: first,
+    edge: "start",
+  })
+  const end = getPadAnchor({ walk, partnerWalk, run: last, edge: "end" })
+  const leading = interpolateUnmatchedSpan({ previous: start, run: first })
+  const trailing = interpolateUnmatchedSpan({ previous: last, run: end })
+  const spans = splitTerminalSpanAtVias({ span: leading, steps })
   let previousBlend: PhaseSkewSpan | null = null
   for (const [index, run] of sideRuns.entries()) {
     const previous = sideRuns[index - 1]
     const next = sideRuns[index + 1]
-    let nextBlend: PhaseSkewSpan | null = null
-    if (next !== undefined)
-      nextBlend = blendTouchingRuns({ previous: run, next })
     if (previous !== undefined) {
       const between =
         previousBlend ?? interpolateUnmatchedSpan({ previous, run })
       if (
-        between &&
+        between !== null &&
         between.endWalkDistanceMm - between.startWalkDistanceMm > MIN_OVERLAP
       ) {
         spans.push(between)
       }
     }
-    spans.push({
+
+    let nextBlend: PhaseSkewSpan | null = null
+    if (next !== undefined) {
+      nextBlend = blendTouchingRuns({ previous: run, next })
+    }
+
+    const span: PhaseSkewSpan = {
       startWalkDistanceMm:
         previousBlend?.endWalkDistanceMm ?? run.startWalkDistanceMm,
       endWalkDistanceMm:
         nextBlend?.startWalkDistanceMm ?? run.endWalkDistanceMm,
       startPhaseSkewMm: previousBlend?.endPhaseSkewMm ?? run.startPhaseSkewMm,
       endPhaseSkewMm: nextBlend?.startPhaseSkewMm ?? run.endPhaseSkewMm,
-    })
+    }
+    spans.push(span)
     previousBlend = nextBlend
   }
+  return spans.concat(splitTerminalSpanAtVias({ span: trailing, steps }))
+}
+
+/**
+ * Splits a terminal fanout at any layer change within it. The unaccounted
+ * length difference ramps over planar copper, with each via's height
+ * added at its own location.
+ */
+function splitTerminalSpanAtVias({
+  span,
+  steps,
+}: {
+  span: PhaseSkewSpan | null
+  steps: TraceStep[]
+}): PhaseSkewSpan[] {
+  if (span === null) return []
+  const vias = steps.filter(
+    (step) =>
+      step.layerChangeLengthAfterMm > 0 &&
+      step.startDistance + step.length >
+        span.startWalkDistanceMm + MIN_OVERLAP &&
+      step.startDistance + step.length + step.layerChangeLengthAfterMm <
+        span.endWalkDistanceMm - MIN_OVERLAP,
+  )
+  if (vias.length === 0) return [span]
+
+  const viaLengthMm = vias.reduce(
+    (length, step) => length + step.layerChangeLengthAfterMm,
+    0,
+  )
+  const planarLengthMm =
+    span.endWalkDistanceMm - span.startWalkDistanceMm - viaLengthMm
+  const planarSkewPerMm =
+    (span.endPhaseSkewMm - span.startPhaseSkewMm - viaLengthMm) / planarLengthMm
+  const spans: PhaseSkewSpan[] = []
+  let startWalkDistanceMm = span.startWalkDistanceMm
+  let startPhaseSkewMm = span.startPhaseSkewMm
+  for (const step of vias) {
+    const endWalkDistanceMm = step.startDistance + step.length
+    const endPhaseSkewMm =
+      startPhaseSkewMm +
+      (endWalkDistanceMm - startWalkDistanceMm) * planarSkewPerMm
+    spans.push({
+      startWalkDistanceMm,
+      endWalkDistanceMm,
+      startPhaseSkewMm,
+      endPhaseSkewMm,
+    })
+    startWalkDistanceMm = endWalkDistanceMm + step.layerChangeLengthAfterMm
+    startPhaseSkewMm = endPhaseSkewMm + step.layerChangeLengthAfterMm
+  }
+  spans.push({ ...span, startWalkDistanceMm, startPhaseSkewMm })
   return spans
 }
 

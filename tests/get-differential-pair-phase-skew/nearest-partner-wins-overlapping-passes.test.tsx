@@ -26,7 +26,8 @@ test("when the negative trace passes the positive one twice, the nearer pass is 
 
   const segments = pair.positive_trace.segments
   expect(phaseSkewAtX({ segments, x: 0 })).toBe(0)
-  expect(phaseSkewAtX({ segments, x: 8 })).toBeCloseTo(-DOUBLE_BACK_LENGTH, 5)
+  const last = segments[segments.length - 1]
+  expect(last.start_length_difference_mm).toBeCloseTo(-DOUBLE_BACK_LENGTH, 5)
   // Where both passes are within the gap, DP is still matched only once.
   const coveringX0 = segments.filter(
     (segment) => segment.start.x <= 0 && segment.end.x >= 0,
@@ -35,7 +36,7 @@ test("when the negative trace passes the positive one twice, the nearer pass is 
   for (const segment of segments) {
     expect(segment.start_length_difference_mm).toBeLessThanOrEqual(0)
     expect(segment.start_length_difference_mm).toBeGreaterThanOrEqual(
-      -DOUBLE_BACK_LENGTH - 1e-5,
+      last.end_length_difference_mm - 1e-5,
     )
   }
 
