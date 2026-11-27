@@ -31,10 +31,10 @@ difference at each endpoint. The difference varies linearly along the segment
 and is this trace's routed length so far minus its partner's. The phase skew is
 interpolated from each pad to the nearest coupled run and between coupled
 runs. At a pad, the difference is measured across the pair, perpendicular to
-the nearest coupled run: a pad level with its partner's pad starts at zero (or
-ends at the end-to-end difference), while a pad level with the middle of its
-partner's fanout starts behind by the partner's length so far. Segments split
-at zero.
+the nearest coupled run: a pad level with its partner's pad starts at their
+start-via difference, zero without vias (or ends at the end-to-end difference),
+while a pad level with the middle of its partner's fanout starts behind by the
+partner's length so far. Segments split at zero.
 
 For consumers that want stored values along the route, opt in with
 `getDifferentialPairPhaseSkew({ circuitJson, sample_spacing_mm: 0.1 })`.

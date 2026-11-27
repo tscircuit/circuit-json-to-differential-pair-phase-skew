@@ -28,7 +28,7 @@ export function getPadAnchor({
     walk: partnerWalk,
     edge,
   })
-  const partnerWalkDistanceMm = getPartnerCrossingDistance({
+  const partnerWalkDistanceMm = getPartnerAnchorDistance({
     walk,
     partnerWalk,
     run,
@@ -36,17 +36,14 @@ export function getPadAnchor({
     walkDistanceMm,
     partnerPadDistanceMm,
   })
-  let phaseSkewMm =
-    partnerPadDistanceMm - (partnerWalkDistanceMm ?? partnerPadDistanceMm)
-  if (edge === "end") {
-    phaseSkewMm = walk.length - (partnerWalkDistanceMm ?? partnerWalk.length)
-  }
-  const partnerDistanceMm = partnerWalkDistanceMm ?? partnerPadDistanceMm
+  let selfDistanceMm = walkDistanceMm
+  if (edge === "end") selfDistanceMm = walk.length
+  const phaseSkewMm = selfDistanceMm - partnerWalkDistanceMm
   return {
     startWalkDistanceMm: walkDistanceMm,
     endWalkDistanceMm: walkDistanceMm,
-    partnerStartWalkDistanceMm: partnerDistanceMm,
-    partnerEndWalkDistanceMm: partnerDistanceMm,
+    partnerStartWalkDistanceMm: partnerWalkDistanceMm,
+    partnerEndWalkDistanceMm: partnerWalkDistanceMm,
     startPhaseSkewMm: phaseSkewMm,
     endPhaseSkewMm: phaseSkewMm,
     layerChangeLengthBeforeMm: 0,
@@ -72,13 +69,8 @@ type FanoutPiece = {
   nearPadDistanceMm: number
 }
 
-/**
- * Where the partner's fanout crosses the pad's cross-section, searched
- * from the coupled run back toward the partner's pad. Null when the
- * partner's pad is level with this pad or hasn't been reached yet at this
- * pad, so the two pads face each other across the pair.
- */
-function getPartnerCrossingDistance({
+/** The partner's walked distance across this pad's cross-section, in mm. */
+function getPartnerAnchorDistance({
   walk,
   partnerWalk,
   run,
@@ -92,19 +84,29 @@ function getPartnerCrossingDistance({
   edge: "start" | "end"
   walkDistanceMm: number
   partnerPadDistanceMm: number
-}): number | null {
+}): number {
+  let fallbackDistanceMm = partnerPadDistanceMm
+  if (edge === "end") fallbackDistanceMm = partnerWalk.length
   const crossSection = getPadCrossSection({ walk, run, edge, walkDistanceMm })
   const partnerPadStep = findStepAt({
     steps: partnerWalk.steps,
     distanceMm: partnerPadDistanceMm,
     edge,
   })
-  if (crossSection === null || partnerPadStep === undefined) return null
+  if (crossSection === null || partnerPadStep === undefined) {
+    return fallbackDistanceMm
+  }
   const partnerPadAheadMm = getDistanceAheadMm({
     point: pointAt({ step: partnerPadStep, distanceMm: partnerPadDistanceMm }),
     crossSection,
   })
-  if (partnerPadAheadMm > -crossSection.levelToleranceMm) return null
+  if (partnerPadAheadMm > crossSection.levelToleranceMm) {
+    if (edge === "start") return 0
+    return fallbackDistanceMm
+  }
+  if (partnerPadAheadMm >= -crossSection.levelToleranceMm) {
+    return fallbackDistanceMm
+  }
 
   let partnerRunDistanceMm = run.partnerEndWalkDistanceMm
   if (edge === "start") partnerRunDistanceMm = run.partnerStartWalkDistanceMm
@@ -119,7 +121,7 @@ function getPartnerCrossingDistance({
       point: pointAt({ step, distanceMm: nearRunDistanceMm }),
       crossSection,
     })
-    if (nearRunAheadMm <= 0) return null
+    if (nearRunAheadMm <= 0) return fallbackDistanceMm
     const nearPadAheadMm = getDistanceAheadMm({
       point: pointAt({ step, distanceMm: nearPadDistanceMm }),
       crossSection,
@@ -131,7 +133,7 @@ function getPartnerCrossingDistance({
         (nearRunAheadMm - nearPadAheadMm)
     )
   }
-  return null
+  return fallbackDistanceMm
 }
 
 /** The line through this trace's pad, perpendicular to its copper where the coupled run begins or ends. */
@@ -238,8 +240,8 @@ function findStepAt({
     isDrawableStep(step) &&
     step.startDistance <= distanceMm + MIN_OVERLAP &&
     step.startDistance + step.length >= distanceMm - MIN_OVERLAP
-  if (edge === "start") return steps.find(covers)
-  return steps.findLast(covers)
+  if (edge === "start") return steps.findLast(covers)
+  return steps.find(covers)
 }
 
 /** The point `distanceMm` along the walk, within `step`. */
